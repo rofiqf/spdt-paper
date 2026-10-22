@@ -42,6 +42,7 @@ from .split_stability import (prediction_disagreement,
                               root_feature_agreement,
                               root_threshold_variation)
 from .tree import StabilityTreeClassifier
+from .anls import ANLSTreeClassifier
 
 ROOT = Path(__file__).resolve().parent.parent
 EXT = ROOT / "results" / "extension"
@@ -106,6 +107,10 @@ def make_method_pipes(struct: dict, lam2: float, lam3: float,
             ("imputer", SimpleImputer(strategy="median")),
             ("clf", RandomForestClassifier(
                 n_estimators=300, random_state=20261021, n_jobs=-1))]),
+        # M5: ANLS dengan parameter default paper (tidak ditune)
+        "anls": Pipeline([
+            ("imputer", SimpleImputer(strategy="median")),
+            ("clf", ANLSTreeClassifier(random_state=0))]),
     }
 
 
@@ -130,6 +135,7 @@ def metrics_row(dataset, method, seed, repeat, fold, y_te, pred, fit_s,
         stats = {"candidates_evaluated": np.nan,
                  "bootstrap_gain_evaluations": 0.0}
     else:
+        # ANLS / RandomForest: struktur internal tidak setara
         nodes = depth = np.nan
         stats = {"candidates_evaluated": np.nan,
                  "bootstrap_gain_evaluations": np.nan}
@@ -153,6 +159,8 @@ def root_split(pipe):
         r = clf.tree_
         return (r.feature if not r.is_leaf else -1,
                 r.threshold if not r.is_leaf else np.nan)
+    if isinstance(clf, ANLSTreeClassifier):
+        return clf.root_split_()
     if isinstance(clf, DecisionTreeClassifier):
         return int(clf.tree_.feature[0]), float(clf.tree_.threshold[0])
     return np.nan, np.nan
@@ -177,7 +185,7 @@ def run_fold(cfg, name, dset_idx, X, y, seed, repeat, fold, tr, te,
                       "struct_sklearn": skl_struct})
 
     methods_a = ["cart_custom", "spdt", "spdt_norm", "cart_sklearn",
-                 "random_forest"]
+                 "random_forest", "anls"]
     for m in methods_a:
         p = clone(pipes[m])
         pred, fit_s, pred_s = fit_predict(p, X_tr, y_tr, X_te)
@@ -190,18 +198,22 @@ def run_fold(cfg, name, dset_idx, X, y, seed, repeat, fold, tr, te,
                                               lam3 if m == "spdt_norm" else 0)}))
 
     # ---- B: label noise (frozen params, corrupted train, clean test)
+    # ANLS sengaja di luar B: biaya loop bootstrap per fit (~detik) x
+    # 75 realisasi/fold tidak proporsional untuk comparator stabilitas;
+    # fokus robustness pada M0-M3 (dokumentasikan di experiment_protocol.md)
+    methods_b = [m for m in methods_a if m != "anls"]
     for level in cfg["noise_levels"]:
         for r in range(cfg["noise_realizations"]):
             cseed = corruption_seed(cfg["seeds"][0], repeat, fold, level, r,
                                     dset_idx)
             rng = np.random.default_rng(cseed)
             y_noisy = corrupt_labels(y_tr, level, rng)
-            for m in methods_a:
-                pred, fit_s, pred_s = fit_predict(
-                    clone(pipes[m]), X_tr, y_noisy, X_te)
+            for m in methods_b:
+                p = clone(pipes[m])
+                pred, fit_s, pred_s = fit_predict(p, X_tr, y_noisy, X_te)
                 rows_b.append(metrics_row(
                     name, m, seed, repeat, fold, y_te, pred, fit_s, pred_s,
-                    pipes[m],
+                    p,
                     {"noise_level": level, "realization": r,
                      "corruption_seed": cseed}))
 
