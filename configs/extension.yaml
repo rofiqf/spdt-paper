@@ -1,0 +1,21 @@
+project:
+  name: "spdt-extension"
+  extends: "configs/experiment.yaml"   # outer/inner CV identical to baseline
+
+seeds: [42]
+tune_B: 10            # B for tuning stages (B sensitivity in ablation E)
+epsilon: 1.0e-4       # normalization stabilizer (sensitivity in ablation E)
+lambda_grid: [0.1, 1.0, 10.0]
+
+noise_levels: [0.0, 0.05, 0.10, 0.20, 0.30]
+noise_realizations: 3
+stability_subsamples: 10
+
+# staged tuning budget (documented deviation from full Cartesian product;
+# training folds only, identical across methods):
+#   S1 structure: 36 configs on plain custom CART
+#   S2 lambda (original): 3 configs at fixed structure, B=10
+#   S3 lambda (normalized): 3 configs at fixed structure, B=10, eps=1e-4
+# pilot datasets: iris, wine, wdbc -> runtime estimate before full run
+pilot_datasets: [iris, wine, wdbc]
+full_datasets: [iris, wine, seeds, glass, sonar, ionosphere, wdbc, banknote]

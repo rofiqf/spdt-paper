@@ -185,8 +185,15 @@ class StabilityTreeClassifier(BaseEstimator, ClassifierMixin):
         self._node_counter = 0
         self._depth_seen = 0
         self._n_nodes = 0
+        self._candidates_evaluated = 0      # total valid candidate splits
+        self._bootstrap_gain_evals = 0      # gain evals over resamples
         self.tree_ = self._build(X, y_enc, depth=0)
         return self
+
+    def stats_(self):
+        return {"nodes": self._n_nodes, "depth": self._depth_seen,
+                "candidates_evaluated": self._candidates_evaluated,
+                "bootstrap_gain_evaluations": self._bootstrap_gain_evals}
 
     def _build(self, X, y_enc, depth):
         self._depth_seen = max(self._depth_seen, depth)
@@ -212,6 +219,7 @@ class StabilityTreeClassifier(BaseEstimator, ClassifierMixin):
                 gain, valid, order = orig[j]
                 if not valid.any():
                     continue
+                self._candidates_evaluated += int(valid.sum())
                 if varis[j] is None:
                     score = gain
                 elif self.normalized_penalty:
@@ -226,6 +234,9 @@ class StabilityTreeClassifier(BaseEstimator, ClassifierMixin):
                 cand = (float(score[t]), float(gain[t]), j, t, order)
                 if best is None or cand[0] > best[0]:
                     best = cand
+            if best is not None and self.penalty_lambda and self.penalty_lambda > 0.0:
+                n_valid_node = sum(int(o[1].sum()) for o in orig)
+                self._bootstrap_gain_evals += n_valid_node * int(self.n_bootstrap)
 
         if best is None or best[1] <= 0.0:
             self._n_nodes += 1
