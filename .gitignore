@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+
+# Virtual environment
+.venv/
+
+# Data (downloaded datasets, kept local; checksums in data/hashes/)
+data/raw/*
+
+# Results & logs (raw fold outputs are large; summaries tracked)
+results/raw/*
+logs/*
+!logs/.gitkeep
+
+# OS
+.DS_Store
