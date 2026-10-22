@@ -15,7 +15,7 @@ terpenuhi. Secara teknis/format/ilmiah: lengkap.
 - [x] Hasil negatif & positif & inkonklusif dilaporkan apa adanya;
       tanpa klaim superior/signifikan/robust yang tak didukung
 - [x] 37 unit tests passed; protokol freeze + 2 amendemen terdokumentasi
-- [ ] **6 co-author fakultas belum dikonfirmasi** (TODO di main.tex)
+- [x] **6 co-author fakultas TERKONFIRMASI** (2026-10-22, user; first author mahasiswa)
 - [ ] **Turnitin UNVERIFIED** — belum ada laporan aktual
 
 ## Rebuild
