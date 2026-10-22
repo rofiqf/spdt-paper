@@ -73,3 +73,19 @@ tidak ada P0; beberapa P1/P2 administratif-statistik sebelum submit.
 - ANLS tidak punya official code untuk validasi silang (diklaim
   faithful dari pseudocode; risiko kecil).
 - Kesimpulan novelty tetap berbasis pencarian negatif — bukan bukti.
+
+## Addendum pasca-eksekusi F1–F4 (2026-10-22, commit 943cb4e)
+
+- F1: koreksi −0.0028 + 3 catatan (multiple-testing, basis waktu, ANLS
+  code) masuk paper; recompile 6 halaman, 0 overfull/undefined.
+- F2: Holm across 5 level noise — hanya level 20% bertahan signifikan
+  (p=0.0034 → p_Holm=0.017); level 10% menjadi 0.0955 (ns). Paper kini
+  melaporkan ini secara eksplisit. Hasil memperkuat framing "sinyal
+  terkonsentrasi di 20%, eksploratori".
+- F3: depth-matched control (results/extension_e2/depth_matched.csv):
+  kontrol rata-rata −0.0021 di bawah SPDT, +0.0007 vs SPDT-norm → efek
+  SPDT asli (kecil) melampaui sekadar pembatasan kedalaman; efek
+  normalisasi = efek kedalaman. Ditambahkan di Discussion RQ1.
+- F4: reproduksibilitas ekstensi PASS bit-exact 3/3 probe (termasuk
+  ANLS) — scripts/validate_extension_reproducibility.py.
+- Verdict tetap MINOR REVISION; sisa P1: video, Turnitin, push GitHub.

@@ -11,7 +11,7 @@ didukung label konfirmatori/eksploratori).
 
 | # | Masalah | Tindakan | Kriteria selesai |
 |---|---|---|---|
-| P1-1 | Multiple testing per-level noise (5 Friedman) tanpa koreksi family; klaim "exploratory" sudah ada tapi audit minta eksplisit | (a) tambah catatan di §Robustness: 5 level = family eksploratori, terapkan Holm across levels pada p per-level dan laporkan; ATAU (b) nyatakan eksplisit "no family correction; exploratory only" | p Holm-across-levels dilaporkan di paper atau catatan eksplisit ada; tabel statistik ter-update |
+| P1-1 | ~~Multiple testing per-level noise~~ **SELESAI (F2)**: Holm across levels; hanya 20% signifikan (p=0.017); paper diperbarui | done | done |
 | P1-2 | Basis waktu tidak seragam antar-versi: baseline lama 21.43 s (GridSearchCV total) vs extended 0.068 s (refit saja) — pembaca bisa membandingkan apel-jeruk | Tambah 1 kalimat di §Computational Cost: angka extended = refit konfigurasi terpilih; tuning staged (S1–S3) terpisah dan mendominasi; bandingkan hanya dalam versi yang sama | kalimat ada; tidak ada tabel yang membandingkan antar basis |
 | P1-3 | Video penjelasan belum direkam (deliverable course) | Rekam per skrip `docs/video_script.md` (±8 menit) | file video terserahkan |
 | P1-4 | Turnitin belum ada laporan | Submit `submission/paper/paper_ieee_extended.pdf` ke institusi | laporan similarity ≤18% atau parafrase bagian flagged |
@@ -20,7 +20,7 @@ didukung label konfirmatori/eksploratori).
 
 | # | Masalah | Tindakan |
 |---|---|---|
-| P2-1 | Δ −0.0029 di paper; CSV −0.00284 → −0.0028 | koreksi angka di main.tex (±2 menit) |
+| P2-1 | ~~Δ −0.0029~~ **SELESAI (F1)**: kini −0.0028 | done |
 | P2-2 | ANLS tanpa validasi silang official code | tambah 1 kalimat limitasi (sudah ada sebagian): "no official code release to cross-validate" |
 | P2-3 | S=8 (extended) vs S=10 (legacy) membandingkan disagreement antar-versi | sudah dibedakan sebagai eksperimen terpisah; tambah footnote 1 angka di Tabel stabilitas extended |
 | P2-4 | Repo belum di-push (experiment link) | push ke GitHub setelah token tersedia |
