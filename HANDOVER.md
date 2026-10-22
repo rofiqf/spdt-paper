@@ -1,61 +1,79 @@
-# HANDOVER — Proyek SPDT (per 2026-10-22)
+# HANDOVER — Proyek SPDT (sesi ditutup 2026-10-22)
 
 Baca file ini dulu sebelum mengerjakan apa pun di repo ini.
 
-## Status: DUA PAPER LENGKAP + SATU EKSTENSI EKSPERIMEN LENGKAP
+## Status akhir sesi: SUBMISSION-READY (teknis), menunggu Turnitin + video
 
-| Deliverable | File | Keterangan |
-|---|---|---|
-| Paper IEEE extended (utama, submit ini) | `paper/paper_ieee_extended.pdf` | 6 halaman, 16 ref, hasil baseline + ekstensi |
-| Paper IEEE baseline (versi editorial) | `paper/paper_ieee_final.pdf` | 4 halaman, hasil baseline saja — dipertahankan sebagai versi ringkas |
-| Paper pandoc lama | `paper/paper.pdf`, `paper/paper_en.pdf` | versi sebelum format IEEE (arsip) |
+**Repo publik: https://github.com/rofiqf/spdt-paper** (branch `master`,
+tag `pre-extension`). README sudah bergaya dokumentasi mahasiswa untuk
+Project Mid Prof. Guruh. Build artifact LaTeX sudah di-.gitignore.
 
-## Hasil kunci (jangan diubah tanpa bukti)
+## Deliverable course
 
-- Baseline: SPDT vs CART-custom 6W/0T/2L, Δ+0.0058; Friedman χ²(2)=4.0000, p=0.1353;
-  stabilitas prediksi SPDT lebih buruk; overhead ~40x.
-- Ekstensi: normalisasi TIDAK membantu di data bersih (3W/5L vs CART);
-  sinyal robustness eksploratori di noise 10–20% (CI exclude nol);
-  stabilitas split terburuk justru varian ternormalisasi;
-  ANLS terbaik secara deskriptif (5W/3L, Δ+0.0066) dan memisahkan
-  stabilitas split ≠ stabilitas prediksi.
+| Item | Status |
+|---|---|
+| Final paper IEEE 6 halaman | ✅ `paper/paper_ieee_extended.pdf` (8 penulis: mahasiswa first + 7 dosen; 16 referensi terverifikasi Crossref; bagian Acknowledgment penggunaan AI/Kimi) |
+| Link eksperimen | ✅ repo GitHub di atas |
+| Video penjelasan | ⏳ **belum direkam** — skrip siap: `docs/video_script.md` (8 slide, ±8 menit) |
+| Turnitin ≤18% | ⏳ **sedang diperiksa user** — submit `submission/paper/paper_ieee_extended.pdf`; bila ada bagian flagged, parafrase lalu recompile (`latexmk -pdf main.tex` di `paper/`) |
+| Token GitHub | ⚠️ **WAJIB di-revoke user** (terekspos di chat sesi ini) |
 
-## Reproduce
+## Hasil kunci (jangan diubah tanpa bukti; selalu verifikasi ulang)
+
+- Baseline: SPDT vs CART-custom 6W/0T/2L, Δ+0.0058; Friedman χ²(2)=4.0000,
+  p=0.1353; stabilitas prediksi SPDT lebih buruk; fit 21.43s vs 0.53s.
+- Ekstensi: normalisasi gagal di data bersih (3W/5L vs CART, Δ−0.0008→
+  dibaca −0.0001 di paper untuk norm-cust; norm vs SPDT 2W/6L, Δ−0.0028);
+  sinyal noise 20% **bertahan setelah Holm** (p_Holm=0.017) — eksploratori;
+  stabilitas split terburuk justru varian ternormalisasi (0.782);
+  ANLS terbaik deskriptif (5W/3L, Δ+0.0066); kontrol depth-matched:
+  SPDT asli −0.0021 vs kontrol (ada efek nyata kecil), norm +0.0007
+  (= efek kedalaman saja).
+- Audit independen: verdict MINOR REVISION, 12/13 klaim angka PASS saat
+  verifikasi, F1–F4 sudah dieksekusi (Holm, depth-control, repro
+  bit-exact ekstensi PASS). Paket lengkap di `audit/`.
+
+## Reproduce (singkat; detail di README.md)
 
 ```bash
 cd /home/ropix/spdt-paper
 export PATH="$HOME/.TinyTeX/bin/x86_64-linux:$HOME/bin:$PATH"
-.venv/bin/python -m pytest -q                    # 37 tests
-# baseline (2.9 jam):
-.venv/bin/python scripts/run_full.py && scripts/run_ablation.py
-# ekstensi (2.6 jam):
-.venv/bin/python scripts/run_extension_full.py && scripts/run_extension_ablation.py
-# paper:
-.venv/bin/python scripts/make_ieee_tables.py && scripts/make_extension_tables.py
+.venv/bin/python -m pytest -q                     # 37 tests
+.venv/bin/python scripts/validate_reproducibility.py            # baseline bit-exact
+.venv/bin/python scripts/validate_extension_reproducibility.py  # ekstensi bit-exact
+# full rerun bila perlu: run_full.py → run_ablation.py →
+#   run_extension_full.py (±2.6 jam) → run_extension_ablation.py
 cd paper && latexmk -pdf main.tex && cp main.pdf paper_ieee_extended.pdf
 ```
 
 ## State teknis server
 
-- venv `.venv` (Python 3.12.3, paket ter-pin, disalin dari venv ALD — PyPI lambat).
-- Tools: pandoc+TinyTeX+latexmk di PATH via ~/.bashrc; OpenML TERBLOKIR
-  (Seeds via static zip UCI, sudah di `data/raw` + hash).
-- Dataset 8 UCI ter-cache dengan SHA256; jangan di-restart ulang pipeline
-  kecuali diminta — hasil ada di `results/` dan `results/extension/`.
-- Git: HEAD `83b1f0a`; tag `pre-extension` menandai snapshot sebelum
-  ekstensi; backup `backups/pre_extension_results_paper.tar.gz`.
+- venv `.venv` (Python 3.12.3; disalin dari venv ALD karena PyPI lambat).
+- OpenML TERBLOKIR; Seeds via static zip UCI; 8 dataset ter-cache + hash.
+- Paket `balance` TIDAK tersedia di mirror TinyTeX — layout halaman
+  terakhir standar (kolom akhir ±85% penuh, itu normal IEEE, jangan
+  "diperbaiki" paksa).
+- TinyTeX menambah paket baru via `tlmgr install <pkg>`; beberapa paket
+  kecil (mis. `xurl`, `caption`) berhasil; yang tidak ada di mirror
+  yihui gagal — jangan andalkan paket LaTeX langka.
 
-## ITEM TERBUKA (untuk user / sesi baru)
+## Struktur penting
 
-1. **6 co-author fakultas** — identitas belum dikonfirmasi; TODO ada di
-   `paper/main.tex`. Paper BELUM submission-ready sampai ini terisi.
-2. **Turnitin** — belum dijalankan; submit `paper_ieee_extended.pdf` ke
-   institusi (target ≤18%). Server ini tidak bisa menjalankannya.
-3. **Push GitHub** — PAT lama sudah di-revoke; butuh token baru
-   (`gh auth login --with-token`) lalu push repo ini sebagai link eksperimen.
-4. **Video penjelasan** — deliverable course; skrip/outline belum dibuat.
-5. Verifikasi Scopus tidak diperlukan (aturan dosen = portal sumber).
+- `submission/` — bundle siap kumpul (PDF + ringkasan CSV + protokol +
+  MANIFEST.sha256; regenerasi manifest setiap PDF berubah).
+- `audit/` — AUDIT_REPORT, ISSUES_PRIORITIZED (P1: video+Turnitin),
+  PRIOR_ART_MATRIX, EXPERIMENT_PLAN (E-1 konfirmatori noise butuh
+  persetujuan user), AGENT_FIX_TASKS (F1–F4 selesai; F5 tertunda).
+- `docs/` — experiment_protocol.md (freeze + 2 amendemen), video_script,
+  prior-art CSV, submission_readiness.
+- `results/extension_e2/` — hasil kontrol depth-matched (F3).
+- Backup pra-ekstensi: `backups/pre_extension_results_paper.tar.gz`
+  (juga di-tag git `pre-extension`).
 
-Dokumen pendukung: `docs/experiment_protocol.md` (freeze + 2 amendemen),
-`docs/experiment_summary.md`, `docs/submission_readiness.md`,
-`docs/prior_art_extension.csv`, `docs/extension_audit.md`.
+## Kontak antar-sesi
+
+Sesi baru cukup dibrief: "Lanjutkan proyek SPDT di
+/home/ropix/spdt-paper, baca HANDOVER.md." Prioritas berikutnya bila
+dilanjutkan: (1) hasil Turnitin → parafrase bila perlu; (2) rekam video;
+(3) opsional E-1/E-3 dari audit/EXPERIMENT_PLAN.md (eksperimen
+konfirmatori; butuh setuju user karena praregistrasi).
