@@ -1,0 +1,121 @@
+{
+  "quinlan1986induction": {
+    "status": "OK",
+    "doi": "10.1023/A:1022643204877",
+    "title": "Induction of Decision Trees",
+    "year": 1986,
+    "venue": "Machine Learning"
+  },
+  "breiman1996bagging": {
+    "status": "OK",
+    "doi": "10.1023/A:1018054314350",
+    "title": "Bagging Predictors",
+    "year": 1996,
+    "venue": "Machine Learning"
+  },
+  "breiman2001randomforests": {
+    "status": "OK",
+    "doi": "10.1023/A:1010933404324",
+    "title": "Random Forests",
+    "year": 2001,
+    "venue": "Machine Learning"
+  },
+  "turney1995stability": {
+    "status": "OK",
+    "doi": "10.1007/BF00993473",
+    "title": "Technical note: Bias and the quantification of stability",
+    "year": 1995,
+    "venue": "Machine Learning"
+  },
+  "dietterich2000ensemble": {
+    "status": "OK",
+    "doi": "10.1023/A:1007607513941",
+    "title": "An Experimental Comparison of Three Methods for Constructing",
+    "year": 2000,
+    "venue": "Machine Learning"
+  },
+  "li2002instability": {
+    "status": "OK",
+    "doi": "10.1145/775047.775131",
+    "title": "Instability of decision tree classification algorithms",
+    "year": 2002,
+    "venue": "Proceedings of the eighth ACM SIGKDD internat"
+  },
+  "briand2009stability": {
+    "status": "OK",
+    "doi": "10.1016/j.csda.2008.10.033",
+    "title": "A similarity measure to assess the stability of classificati",
+    "year": 2009,
+    "venue": "Computational Statistics &amp; Data Analysis"
+  },
+  "lee2024anls": {
+    "status": "OK",
+    "doi": "10.1109/ACCESS.2024.3419228",
+    "title": "Assessing Decision Tree Stability: A Comprehensive Method fo",
+    "year": 2024,
+    "venue": "IEEE Access"
+  },
+  "mirzamomen2017stable": {
+    "status": "OK",
+    "doi": "10.1007/s10044-016-0542-2",
+    "title": "A framework to induce more stable decision trees for pattern",
+    "year": 2016,
+    "venue": "Pattern Analysis and Applications"
+  },
+  "wang2017tsallis": {
+    "status": "OK",
+    "doi": "10.1016/j.knosys.2016.12.021",
+    "title": "A less-greedy two-term Tsallis Entropy Information Metric ap",
+    "year": 2017,
+    "venue": "Knowledge-Based Systems"
+  },
+  "yang2019pairgain": {
+    "status": "OK",
+    "doi": "10.1109/ICDM.2019.00184",
+    "title": "On the Robust Splitting Criterion of Random Forest",
+    "year": 2019,
+    "venue": "2019 IEEE International Conference on Data Mi"
+  },
+  "strobl2007bias": {
+    "status": "OK",
+    "doi": "10.1016/j.csda.2006.12.030",
+    "title": "Unbiased split selection for classification trees based on t",
+    "year": 2007,
+    "venue": "Computational Statistics &amp; Data Analysis"
+  },
+  "domingos2000vfdt": {
+    "status": "OK",
+    "doi": "10.1145/347090.347107",
+    "title": "Mining high-speed data streams",
+    "year": 2000,
+    "venue": "Proceedings of the sixth ACM SIGKDD internati"
+  },
+  "chen2016xgboost": {
+    "status": "OK",
+    "doi": "10.1145/2939672.2939785",
+    "title": "XGBoost",
+    "year": 2016,
+    "venue": "Proceedings of the 22nd ACM SIGKDD Internatio"
+  },
+  "delise2026era": {
+    "status": "OK",
+    "doi": "10.1016/j.eswa.2025.129687",
+    "title": "Era splitting - Invariant learning for decision trees",
+    "year": 2026,
+    "venue": "Expert Systems with Applications"
+  },
+  "dannegger2000nls": {
+    "status": "OK",
+    "doi": "10.1002/(SICI)1097-0258(20000229)19:4<475::AID-SIM351>3.0.CO;2-V",
+    "title": "Tree stability diagnostics and some remedies for instability",
+    "year": 2000,
+    "venue": "Statistics in Medicine"
+  },
+  "himabindu2015cvdt": {
+    "status": "OK",
+    "doi": "10.1007/978-3-319-27212-2_11",
+    "title": "Coefficient of Variation Based Decision Tree for Fuzzy Class",
+    "year": 2015,
+    "venue": "Advances in Intelligent Systems and Computing"
+  }
+}

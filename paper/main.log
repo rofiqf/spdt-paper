@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.10.21)  22 OCT 2026 13:42
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.10.21)  22 OCT 2026 14:35
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -22,7 +22,7 @@ LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 50
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
 -- Using 8.5in x 11in (letter) paper.
--- Using PDF output.
+-- Using DVI output.
 \@IEEEnormalsizeunitybaselineskip=\dimen153
 -- This is a 10 point document.
 LaTeX Encoding Info:    Redeclaring text command \textunderscore (encoding ?) on input line 937.
@@ -238,15 +238,19 @@ Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
 ) (/home/ropix/.TinyTeX/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
-Package graphics Info: Driver file: pdftex.def on input line 106.
- (/home/ropix/.TinyTeX/texmf-dist/tex/latex/graphics-def/pdftex.def
-File: pdftex.def 2025/09/29 v1.2d Graphics/color driver for pdftex
+Package graphics Info: Driver file: dvips.def on input line 106.
+ (/home/ropix/.TinyTeX/texmf-dist/tex/latex/graphics-def/dvips.def
+File: dvips.def 2025/01/21 v3.2a Graphics/color driver for dvips
 ))
 \Gin@req@height=\dimen198
 \Gin@req@width=\dimen199
-) (/home/ropix/.TinyTeX/texmf-dist/tex/latex/l3kernel/l3backend-pdftex.def
-File: l3backend-pdftex.def 2026-09-09 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count307
+) (/home/ropix/.TinyTeX/texmf-dist/tex/latex/l3kernel/l3backend-dvips.def
+File: l3backend-dvips.def 2026-09-09 L3 backend support: dvips
+\l__pdfannot_backend_content_box=\box59
+\l__pdfannot_backend_model_box=\box60
+\g__pdfannot_backend_int=\count307
+\g__pdfannot_backend_link_int=\count308
+\g__pdfannot_backend_link_sf_int=\count309
 ) (./main.aux
 
 LaTeX Warning: Label `tab:stability' multiply defined.
@@ -260,66 +264,80 @@ LaTeX Warning: Label `tab:runtime' multiply defined.
 )
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 36.
-LaTeX Font Info:    ... okay on input line 36.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 36.
-LaTeX Font Info:    ... okay on input line 36.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 36.
-LaTeX Font Info:    ... okay on input line 36.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 36.
-LaTeX Font Info:    ... okay on input line 36.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 36.
-LaTeX Font Info:    ... okay on input line 36.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 36.
-LaTeX Font Info:    ... okay on input line 36.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 36.
-LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
 
 -- Lines per column: 56 (exact).
-(/home/ropix/.TinyTeX/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
-Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
-Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
- (/home/ropix/.TinyTeX/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
-File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
-))
-LaTeX Font Info:    Calculating math sizes for size <11> on input line 38.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 38.
- (/home/ropix/.TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
+LaTeX Font Info:    Calculating math sizes for size <11> on input line 40.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 40.
+(/home/ropix/.TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 38.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 40.
  (/home/ropix/.TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-) [1{/home/ropix/.TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/home/ropix/.TinyTeX/texmf-dist/fonts/enc/dvips/base/8r.enc}
+) [1
 
 
 ] (./tables_generated.tex) (./tables_extension.tex)
-Underfull \hbox (badness 1442) in paragraph at lines 223--238
+Underfull \hbox (badness 1442) in paragraph at lines 225--240
 \OT1/ptm/m/n/10 the least among sin-gle trees: me-dian paired dif-fer-ences
  []
 
-<../figures/noise_robustness_macro_f1.png, id=22, 570.4512pt x 352.1958pt>
-File: ../figures/noise_robustness_macro_f1.png Graphic file (type png)
-<use ../figures/noise_robustness_macro_f1.png>
-Package pdftex.def Info: ../figures/noise_robustness_macro_f1.png  used on input line 241.
-(pdftex.def)             Requested size: 516.0pt x 318.58014pt.
-[2]
-Underfull \vbox (badness 1609) has occurred while \output is active []
 
-<../figures/root_split_agreement.png, id=28, 570.4512pt x 352.1958pt>
-File: ../figures/root_split_agreement.png Graphic file (type png)
-<use ../figures/root_split_agreement.png>
-Package pdftex.def Info: ../figures/root_split_agreement.png  used on input line 262.
-(pdftex.def)             Requested size: 252.0pt x 155.58464pt.
-<../figures/prediction_disagreement.png, id=29, 570.4512pt x 352.1958pt>
-File: ../figures/prediction_disagreement.png Graphic file (type png)
-<use ../figures/prediction_disagreement.png>
-Package pdftex.def Info: ../figures/prediction_disagreement.png  used on input line 268.
-(pdftex.def)             Requested size: 252.0pt x 155.58464pt.
+! LaTeX Error: Cannot determine size of graphic in ../figures/noise_robustness_macro_f1.png (no BoundingBox).
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.243 ...../figures/noise_robustness_macro_f1.png}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
 
- [3 <../figures/noise_robustness_macro_f1.png>] [4 <../figures/root_split_agreement.png> <../figures/prediction_disagreement.png>] [5] (./main.bbl)
+File: ../figures/noise_robustness_macro_f1.png Graphic file (type eps)
+<../figures/noise_robustness_macro_f1.png> [2]
+
+! LaTeX Error: Cannot determine size of graphic in ../figures/root_split_agreement.png (no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.264 ...dth]{../figures/root_split_agreement.png}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: ../figures/root_split_agreement.png Graphic file (type eps)
+<../figures/root_split_agreement.png>
+
+! LaTeX Error: Cannot determine size of graphic in ../figures/prediction_disagreement.png (no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.270 ...]{../figures/prediction_disagreement.png}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: ../figures/prediction_disagreement.png Graphic file (type eps)
+<../figures/prediction_disagreement.png> [3] [4] [5] (./main.bbl)
 
 ** Conference Paper **
 Before submitting the final camera ready copy, remember to:
@@ -331,9 +349,7 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-[6
-
-] (./main.aux)
+[6] (./main.aux)
  ***********
 LaTeX2e <2026-06-01>
 L3 programming layer <2026-09-09>
@@ -344,18 +360,12 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 3252 strings out of 469040
- 55270 string characters out of 5457101
- 509807 words of memory out of 5000000
- 32331 multiletter control sequences out of 15000+600000
- 675810 words of font info for 136 fonts, out of 8000000 for 9000
+ 3158 strings out of 469040
+ 54913 string characters out of 5457101
+ 509771 words of memory out of 5000000
+ 32255 multiletter control sequences out of 15000+600000
+ 661575 words of font info for 123 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 57i,9n,65p,380b,336s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</home/ropix/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></home/ropix/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></home/ropix/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></home/ropix/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></home/ropix/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></home/ropix/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></home/ropix/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></home/ropix/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></home/ropix/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></home/ropix/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></home/ropix/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></home/ropix/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></home/ropix/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></home/ropix/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></home/ropix/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></home/ropix/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></home/ropix/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></home/ropix/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></home/ropix/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (6 pages, 387625 bytes).
-PDF statistics:
- 126 PDF objects out of 1000 (max. 8388607)
- 73 compressed objects within 1 object stream
- 0 named destinations out of 1000 (max. 500000)
- 16 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 57i,9n,65p,1681b,336s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
+Output written on main.dvi (6 pages, 37200 bytes).
