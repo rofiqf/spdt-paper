@@ -1,0 +1,2 @@
+test,statistic,df,p_value,n_datasets,kendall_w,decision
+friedman,4.0,2,0.1353352832366127,8,0.25,no_omnibus_evidence_posthoc_not_run
