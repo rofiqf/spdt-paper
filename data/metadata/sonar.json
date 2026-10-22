@@ -1,0 +1,18 @@
+{
+  "dataset": "sonar",
+  "source": "ucimlrepo",
+  "uci_id": 151,
+  "doi": "10.24432/C5T01Q",
+  "source_url": "https://archive.ics.uci.edu/dataset/151/connectionist+bench+sonar+mines+vs+rocks",
+  "downloaded_at_utc": "2026-10-22T02:40:22.685063+00:00",
+  "n_samples": 208,
+  "n_features": 60,
+  "target_name": "class",
+  "n_classes": 2,
+  "class_distribution": {
+    "M": 111,
+    "R": 97
+  },
+  "missing_values": false,
+  "sha256": "7c86ebe389d467e432d9e2e242c0eb752802dd0d962aeed73a164ddd761fab8a"
+}

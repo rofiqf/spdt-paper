@@ -57,6 +57,13 @@ def main():
     paired = need(SUM / "paired_differences.csv")
 
     fr = stats.iloc[0]
+    pretty_decision = {
+        "no_omnibus_evidence_posthoc_not_run":
+            "tidak ada bukti omnibus; post-hoc tidak dijalankan",
+        "omnibus_significant_posthoc_justified":
+            "omnibus signifikan; post-hoc dibenarkan",
+    }.get(str(fr["decision"]), str(fr["decision"]))
+    stats = stats.assign(decision=pretty_decision)
     posthoc_path = SUM / "posthoc_wilcoxon_holm.csv"
     posthoc = (pd.read_csv(posthoc_path) if posthoc_path.exists() else None)
 
@@ -110,9 +117,12 @@ def main():
     # frekuensi hyperparameter (top saja)
     tbl_hyp = df_to_md(hyps)
 
-    # paired delta ringkas spdt vs cart_custom
-    pdelta = paired[(paired.method_a == "spdt") &
-                    (paired.method_b == "cart_custom")]
+    # paired delta ringkas spdt vs cart_custom (urutan kolom pivot abjad:
+    # pasangan tersimpan sebagai cart_custom vs spdt; delta didefinisikan
+    # spdt - cart_custom)
+    pdelta = paired[(paired.method_a == "cart_custom") &
+                    (paired.method_b == "spdt")].copy()
+    pdelta["delta"] = -pdelta["delta"]
     wins = int((pdelta["delta"] > 0).sum())
     ties = int((pdelta["delta"] == 0).sum())
     losses = int((pdelta["delta"] < 0).sum())
@@ -153,6 +163,24 @@ def main():
            .replace("{{FRIEDMAN_STAT}}", f"{fr['statistic']:.4f}")
            .replace("{{FRIEDMAN_P}}", f"{fr['p_value']:.4f}")
            .replace("{{KENDALL_W}}", f"{fr['kendall_w']:.4f}"))
+    # sanitasi unicode -> ASCII/latex aman untuk pdflatex (IEEEtran)
+    for src, dst in {
+        "\u2212": "-",   # minus unicode
+        "\u00b7": "*",   # titik tengah
+        "\u03bb": "lambda",
+        "\u03c7": "chi",
+        "\u03a3": "Sum",
+        "\u03b5": "eps",
+        "\u0394": "Delta",
+        "\u2013": "-",
+        "\u2014": "--",
+        "\u00d7": "x",   # tanda kali
+        "\u2265": ">=",
+        "\u2264": "<=",
+        "\u00b1": "+/-",
+        "\u00b2": "^2",
+    }.items():
+        out = out.replace(src, dst)
     (PAPER / "draft.md").write_text(out)
     print("paper written to", PAPER / "draft.md")
 

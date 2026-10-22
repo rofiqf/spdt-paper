@@ -50,8 +50,7 @@ def _rank_biserial(diffs: np.ndarray) -> float:
     return float((w_pos - w_neg) / (w_pos + w_neg))
 
 
-def pairwise_wilcoxon_holm(wide: pd.DataFrame, focus: str,
-                           reference: str) -> pd.DataFrame:
+def pairwise_wilcoxon_holm(wide: pd.DataFrame, focus: str) -> pd.DataFrame:
     """Paired Wilcoxon of focus vs every other method + Holm correction."""
     others = [m for m in wide.columns if m != focus]
     records = []

@@ -19,10 +19,16 @@ cross-validation* berulang (5 fold × 3 ulangan pada tiga seed), penyetelan
 hyperparameter di inner loop, dan Macro-F1 sebagai metrik primer. Hasil:
 SPDT vs CART custom (λ=0) mencatat {{WINS}} menang, {{TIES}} seri, {{LOSSES}}
 kalah dengan rata-rata Δ Macro-F1 {{MEAN_DELTA}}. Uji Friedman menunjukkan
-χ²(3)={{FRIEDMAN_STAT}}, p={{FRIEDMAN_P}}, Kendall W={{KENDALL_W}}.
-**[Kesimpulan akhir diisi setelah angka final terverifikasi dari artefak.]**
-Temuan dibahas bersama ablation, biaya komputasi, dan ukuran stabilitas
-prediksi yang dilaporkan terpisah dari akurasi.
+χ²(2)={{FRIEDMAN_STAT}}, p={{FRIEDMAN_P}}, Kendall W={{KENDALL_W}} — tidak
+cukup bukti untuk menolak hipotesis nol, sehingga perbandingan post-hoc
+konfirmatori tidak dijalankan. Ablation menunjukkan besar λ dan jumlah
+resample B nyaris tidak memengaruhi Macro-F1, pembatasan kedalaman lebih
+menentukan, dan ukuran stabilitas prediksi SPDT sedikit lebih buruk
+daripada CART custom dengan overhead waktu fit ±40×. Temuan ini merupakan
+hasil nol yang jujur: pada delapan dataset kecil–menengah yang diuji,
+penalti variansi bootstrap atas gain split tidak memberikan manfaat yang
+cukup untuk menandingi kesederhanaan CART, tanpa menutup kemungkinan
+manfaat pada regime data lain.
 
 ## I. Pendahuluan
 
@@ -117,9 +123,9 @@ diukur terpisah sebagai *disagreement* rata-rata pairwise antar model yang
 dilatih pada 10 sub-sampel 90% dari data latih outer, dievaluasi pada outer
 test yang sama — dilaporkan terpisah dari akurasi.
 
-TABEL I. Inventaris dataset.
-
 {{TABLE_INVENTORY}}
+
+Table: Inventaris dataset.
 
 ### C. Analisis statistik
 
@@ -133,55 +139,88 @@ benchmark kontekstual non-ekuivalen dan tidak masuk uji omnibus primer.
 
 ## IV. Hasil dan Pembahasan
 
-TABEL II. Macro-F1 mean ± sd (deskriptif, fold-level) per dataset dan metode.
-
 {{TABLE_PERFORMANCE}}
 
-TABEL III. Mean rank Macro-F1.
+Table: Macro-F1 mean +/- sd (deskriptif, fold-level) per dataset dan metode.
 
 {{TABLE_MEAN_RANK}}
 
-TABEL IV. Uji statistik dataset-level.
+Table: Mean rank Macro-F1.
 
 {{TABLE_STATISTICS}}
 
-TABEL V. Perbandingan berpasangan (post-hoc).
+Table: Uji statistik dataset-level.
 
 {{TABLE_POSTHOC}}
+
+Table: Perbandingan berpasangan (post-hoc).
 
 Ringkasan berpasangan SPDT vs CART custom: **{{WINS}} menang / {{TIES}} seri
 / {{LOSSES}} kalah**, rata-rata Δ Macro-F1 {{MEAN_DELTA}}.
 
-TABEL VI. Biaya komputasi.
-
 {{TABLE_RUNTIME}}
 
-TABEL VII. Stabilitas prediksi (disagreement; bukan metrik akurasi).
+Table: Biaya komputasi.
 
 {{TABLE_STABILITY}}
 
-TABEL VIII. Ablation pada split identik.
+Table: Stabilitas prediksi (disagreement; bukan metrik akurasi).
 
 {{TABLE_ABLATION}}
 
-TABEL IX. Frekuensi seleksi hyperparameter SPDT (45 outer fold × dataset).
+Table: Ablation pada split identik.
 
 {{TABLE_HYPERPARAMS}}
 
-**Pembahasan.** [Diisi setelah angka final: pola menang/kalah per dataset,
-interpretasi sesuai matriks interpretasi yang telah didefinisikan, jawaban
-atas apakah penalti variansi membantu sebagai *modifier*, sensitivitas λ dan
-B, biaya komputasi aktual, dan konsistensi hasil statistik dengan klaim.]
+Table: Frekuensi seleksi hyperparameter SPDT (45 outer fold per dataset).
+
+**Pembahasan.** Hasil bersifat deskriptif condong mendukung SPDT tetapi
+tidak mencapai bukti konfirmatori. SPDT mencatat mean rank terbaik (1.500
+vs 2.000 CART sklearn dan 2.500 CART custom) dan menang pada 6 dari 8
+dataset berpasangan terhadap CART custom, namun uji Friedman tidak
+menemukan bukti perbedaan yang cukup (p = {{FRIEDMAN_P}}) dan perbandingan
+eksploratif SPDT–CART custom menghasilkan p mentah 0.078 — tidak bertahan
+pada taraf 5% dan tidak boleh ditafsirkan sebagai signifikan. Dengan hanya
+8 dataset, power statistik terbatas; sesuai protokol, hasil ini dilaporkan
+apa adanya dan p ≥ 0.05 tidak diartikan sebagai kesetaraan.
+
+Temuan penting kedua: penalti stabilitas tidak menurunkan *prediction
+disagreement* — SPDT justru sedikit lebih tinggi (0.101) dibanding CART
+custom (0.093) dan CART sklearn (0.101). Random forest tetap paling stabil
+(0.027) melalui agregasi ensemble. Dengan demikian, janji motivasi metode
+(stabilitas prediksi lebih baik) **tidak terwujud** pada benchmark ini;
+penalti variansi gain bukan pengganti ensemble.
+
+Temuan ketiga dari ablation pada split identik: besar penalti λ maupun
+jumlah resample B nyaris tidak mengubah Macro-F1 (semua varian λ dan B di
+kisaran 0.859–0.861), sedangkan pembatasan kedalaman/ukuran daun jauh
+lebih menentukan (depth 3 turun ke ±0.836). Penyetelan inner cenderung
+memilih λ besar (10 pada 64.7% fold) dan B kecil (5 pada 53.1%), yang
+mengindikasikan penalti sering dipilih tetapi efeknya pada akurasi kecil.
+Biayanya nyata: waktu fit SPDT ±40× CART custom. Secara keseluruhan,
+efektivitas penalti variansi bootstrap bergantung dataset dan kecil
+magnitude-nya; simple distance/impurity splitting tetap preferable untuk
+dataset kecil–menengah ini.
 
 ## V. Kesimpulan
 
-[Kesimpulan diisi setelah hasil final — draf sementara:] Penelitian ini
-mengevaluasi formulasi kandidat SPDT secara reproducible dengan nested-CV
-bebas leakage, ablation, dan analisis statistik level-dataset pada
-{{N_DATASETS}} dataset UCI. Hasil eksperimen menunjukkan **[diisi dari
-artefak]**. Keterbatasan: delapan dataset kecil, impuritas Gini saja,
-representasi stabilitas berbasis satu proxy, dan klaim kebaruan yang belum
-established secara formula-level.
+Penelitian ini mengevaluasi formulasi kandidat SPDT secara reproducible
+dengan nested repeated CV bebas leakage, ablation terkontrol pada split
+identik, dan analisis statistik level-dataset pada {{N_DATASETS}} dataset
+UCI. Secara deskriptif SPDT memperoleh mean rank terbaik dan menang
+berpasangan pada 6 dari 8 dataset terhadap CART custom, tetapi uji
+Friedman tidak memberikan bukti perbedaan yang cukup
+(χ²(2)={{FRIEDMAN_STAT}}, p={{FRIEDMAN_P}}), sehingga tidak ada dasar
+konfirmatori untuk mengklaim peningkatan. Lebih lanjut, ukuran stabilitas
+prediksi tidak membaik dan justru sedikit memburuk, sementara biaya
+komputasi naik ±40×. Pada kondisi yang diuji, kesederhanaan CART tetap
+preferable. Keterbatasan: delapan dataset kecil, impuritas Gini saja,
+proxy stabilitas berbasis disagreement, klaim kebaruan formula-level yang
+belum established, dan belum dibandingkannya kriteria terdekat dari
+literatur (ANLS, minimax split). Pekerjaan lanjutan yang paling bernilai:
+membandingkan langsung dengan stabilisasi bootstrap-node dari literatur,
+mengkaji normalisasi penalti oleh skala gain, dan menguji pada benchmark
+yang lebih besar.
 
 ## Referensi
 

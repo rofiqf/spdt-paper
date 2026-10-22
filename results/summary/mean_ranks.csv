@@ -1,0 +1,4 @@
+method,mean_rank
+spdt,1.5
+cart_sklearn,2.0
+cart_custom,2.5

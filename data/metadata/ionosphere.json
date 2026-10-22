@@ -1,0 +1,18 @@
+{
+  "dataset": "ionosphere",
+  "source": "ucimlrepo",
+  "uci_id": 52,
+  "doi": "10.24432/C5W01B",
+  "source_url": "https://archive.ics.uci.edu/dataset/52/ionosphere",
+  "downloaded_at_utc": "2026-10-22T03:24:05.152065+00:00",
+  "n_samples": 351,
+  "n_features": 34,
+  "target_name": "Class",
+  "n_classes": 2,
+  "class_distribution": {
+    "b": 126,
+    "g": 225
+  },
+  "missing_values": false,
+  "sha256": "6278d9e8517bb840a5076c4badcc65f6e42e8ec46e40a4b5c7ed1aae8f6460ac"
+}

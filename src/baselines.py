@@ -9,7 +9,9 @@ from .tree import StabilityTreeClassifier
 
 
 def make_sklearn_cart(**overrides):
-    params = dict(criterion="gini")
+    # random_state HARUS tetap: DecisionTreeClassifier(random_state=None)
+    # ternyata nondeterministik antar-fit (tie-breaking) pada sklearn 1.9.1
+    params = dict(criterion="gini", random_state=0)
     params.update(overrides)
     return DecisionTreeClassifier(**params)
 

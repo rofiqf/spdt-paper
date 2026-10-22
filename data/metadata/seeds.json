@@ -1,0 +1,20 @@
+{
+  "dataset": "seeds",
+  "source": "uci_static_zip",
+  "uci_id": 236,
+  "doi": "10.24432/C5H30K",
+  "source_url": "https://archive.ics.uci.edu/dataset/236/seeds",
+  "downloaded_at_utc": "2026-10-22T02:13:16.738849+00:00",
+  "n_samples": 210,
+  "n_features": 7,
+  "target_name": "class",
+  "n_classes": 3,
+  "class_distribution": {
+    "1": 70,
+    "2": 70,
+    "3": 70
+  },
+  "missing_values": false,
+  "sha256": "21ac2d2cf84cf403ed90c1ec802befdf828c2014b3bf3a839c4b977df6c13593",
+  "zip_sha256": "5033bd71b24592fa70d9b3cc5be02332dc6d03d0b27e6655e6d553f39afab323"
+}

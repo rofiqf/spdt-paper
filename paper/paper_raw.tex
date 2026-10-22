@@ -1,0 +1,705 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+\documentclass[
+  conference]{IEEEtran}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{longtable,booktabs,array}
+\usepackage{caption}
+\captionsetup[table]{skip=6pt}
+\newcounter{none} % for unnumbered tables
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
+  \fi
+  % set entry spacing
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{times}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+% fallback for those not using the hyperref driver hyperxmp:
+\makeatletter
+\@ifundefined{xmpquote}{\newcommand{\xmpquote}[1]{#1}}{}
+\makeatother
+\hypersetup{
+  colorlinks=true,
+  linkcolor={black},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={black},
+  pdfcreator={LaTeX via pandoc}}
+
+\author{Anonymous}
+\date{}
+
+\begin{document}
+
+\section{Stability-Penalized Split Selection for Decision Tree
+Classification: Sebuah Evaluasi Multi-Dataset yang
+Reproducible}\label{stability-penalized-split-selection-for-decision-tree-classification-sebuah-evaluasi-multi-dataset-yang-reproducible}
+
+\textbf{Kata kunci}--pohon keputusan; kriteria split; stabilitas
+bootstrap; variansi gain; \emph{nested cross-validation}; perbandingan
+statistik nonparametrik.
+
+\subsection{Abstrak}\label{abstrak}
+
+Pohon keputusan CART dikenal cepat dan interpretabel, namun struktur
+pohonnya tidak stabil: perubahan kecil pada data latih dapat mengubah
+split yang terpilih dan akhirnya prediksi. Penelitian ini mengevaluasi
+sebuah formulasi kandidat yang sangat sederhana, dinamai
+\emph{Stability-Penalized Decision Tree} (SPDT), di mana skor setiap
+kandidat split dihitung sebagai gain Gini dikurangi penalti berbobot
+terhadap variansi gain tersebut atas resample bootstrap dari data node:
+\texttt{Score(s)\ =\ Gain(s,D)\ -\ lambda*Var\_b{[}Gain(s,D\^{}(b)){]}}.
+Penelusuran literatur hingga 22 Oktober 2026 tidak menemukan ekuivalen
+formula-level dari kriteria tersebut, tetapi ruang riset stabilitas
+pohon sudah ramai; karena itu formulasi diposisikan sebagai kandidat,
+bukan klaim metode baru. Evaluasi dilakukan pada 8 dataset klasifikasi
+tabular UCI dengan \emph{nested cross-validation} berulang (5 fold x 3
+ulangan pada tiga seed), penyetelan hyperparameter di inner loop, dan
+Macro-F1 sebagai metrik primer. Hasil: SPDT vs CART custom (lambda=0)
+mencatat 6 menang, 0 seri, 2 kalah dengan rata-rata Delta Macro-F1
++0.0058. Uji Friedman menunjukkan chi\^{}2(2)=4.0000, p=0.1353, Kendall
+W=0.2500 -- tidak cukup bukti untuk menolak hipotesis nol, sehingga
+perbandingan post-hoc konfirmatori tidak dijalankan. Ablation
+menunjukkan besar lambda dan jumlah resample B nyaris tidak memengaruhi
+Macro-F1, pembatasan kedalaman lebih menentukan, dan ukuran stabilitas
+prediksi SPDT sedikit lebih buruk daripada CART custom dengan overhead
+waktu fit +/-40x. Temuan ini merupakan hasil nol yang jujur: pada
+delapan dataset kecil-menengah yang diuji, penalti variansi bootstrap
+atas gain split tidak memberikan manfaat yang cukup untuk menandingi
+kesederhanaan CART, tanpa menutup kemungkinan manfaat pada regime data
+lain.
+
+\subsection{I. Pendahuluan}\label{i.-pendahuluan}
+
+Pohon keputusan adalah metode klasifikasi nonparametrik yang mempartisi
+ruang fitur secara rekursif. Kriteria split CART memilih kandidat
+(fitur, ambang) yang memaksimalkan penurunan impuritas Gini (Breiman et
+al. 1984; Quinlan 1986). Namun demikian, struktur pohon diketahui tidak
+stabil: perturbasi kecil pada data latih dapat mengubah split yang
+terpilih (Li and Clarke 2002), dan konsekuensinya prediksi berubah --
+fenomena inilah yang melatarbelakangi \emph{bagging} dan \emph{random
+forests} (Breiman 1996, 2001; Dietterich 2000).
+
+Berbagai pendekatan telah mengurangi instabilitas tersebut pada tingkat
+yang berbeda: filter signifikansi statistik, pembatasan struktural,
+agregasi ensemble, atau pemilihan model yang stabil (Briand et al. 2009;
+Lee et al. 2024; Mirzamomen and Kangavari 2017; Wang et al. 2017). Yang
+jarang diuji secara langsung adalah pertanyaan yang lebih sempit ini:
+
+\begin{quote}
+\textbf{Apakah penalti variansi bootstrap atas gain split, dikurangkan
+langsung dari skor split, dapat meningkatkan Macro-F1 out-of-sample
+dan/atau stabilitas prediksi dibandingkan CART standar pada resampling
+berulang, dengan biaya runtime yang dapat diterima?}
+\end{quote}
+
+Hipotesis nol: tidak ada peningkatan sistematis dibandingkan baseline
+lintas dataset independen. Tidak ada hipotesis bahwa SPDT \emph{harus}
+unggul.
+
+Kontribusi yang diklaim terbatas pada: (i) formulasi kandidat yang
+eksplisit; (ii) implementasi dan audit reproducible; (iii) evaluasi
+nested-CV yang bebas \emph{leakage}; (iv) ablation dan analisis
+statistik yang jujur terhadap hasil positif maupun negatif.
+
+\subsection{II. Karya Terkait}\label{ii.-karya-terkait}
+
+\textbf{Stabilitas pohon keputusan.} Instabilitas struktural pohon
+dibahas secara formal oleh Li dan Clarke (Li and Clarke 2002);
+pengukuran kuantitatif stabilitas dan kemiripan antar pohon dikembangkan
+antara lain oleh Turney (Turney 1995) serta Briand dkk. (Briand et al.
+2009), yang juga mengevaluasi stabilisasi node berbasis bootstrap (lini
+NLS/Dannegger). Lee dkk. (Lee et al. 2024) mengusulkan ANLS yang
+menjalankan iterasi bootstrap pada setiap node dan memilih prediktor
+terpilih terbanyak -- mekanisme resampling-node yang paling dekat dengan
+penelitian ini, tetapi agregasinya memakai voting frekuensi, bukan
+penalti variansi gain. Mirzamomen dan Kangavari (Mirzamomen and
+Kangavari 2017) menstabilkan melalui uji split multi-atribut.
+
+\textbf{Kriteria split alternatif.} Kriteria berbasis entropi Tsallis
+dua-suku (Wang et al. 2017), kriteria \emph{robust} terhadap label noise
+(Yang et al. 2019), pemilihan split tak-bias berbasis statistik Gini
+(Strobl et al. 2007), dan pohon arus data dengan batas keyakinan
+Hoeffding (Domingos and Hulten 2000) menunjukkan bahwa ruang ``mengubah
+skor split'' sudah aktif diteliti. Delise (Delise 2026) menilai
+konsistensi gain lintas \emph{environment} pada boosting. Penalti skor
+oleh variansi estimasi resampled juga dikenal di luar pohon (pola
+mean-variance pada seleksi model). Tidak satu pun dari karya yang
+berhasil diverifikasi memuat rumus
+\texttt{Gain\ -\ lambda*Var\_bootstrap{[}Gain{]}}; namun demikian temuan
+negatif penelusuran bukan bukti kebaruan, sehingga formulasi tetap dicap
+sebagai kandidat.
+
+\subsection{III. Metode}\label{iii.-metode}
+
+\subsubsection{A. Kriteria split yang
+diusulkan}\label{a.-kriteria-split-yang-diusulkan}
+
+Untuk node dengan data D (hanya bagian latih yang sah), dengan
+\texttt{Gini(D)\ =\ 1\ -\ Sum\_c\ p(c\textbar{}D)\^{}2} dan gain split
+
+\texttt{Gain(s,D)\ =\ Gini(D)\ -\ (\textbar{}D\_L\textbar{}/\textbar{}D\textbar{})*Gini(D\_L)\ -\ (\textbar{}D\_R\textbar{}/\textbar{}D\textbar{})*Gini(D\_R)},
+
+dibangun B resample bootstrap \texttt{D\^{}(b)} dari baris node. Untuk
+setiap kandidat s yang valid:
+
+\texttt{V(s)\ =\ Var\_b{[}Gain(s,D\^{}(b)){]}} (varians sampel, ddof=1)
+
+\textbf{Skor utama: \texttt{Score(s)\ =\ Gain(s,D)\ -\ lambda*V(s)}}.
+
+Kebijakan deterministik: ambang kandidat = titik tengah nilai unik
+terurut; \texttt{min\_samples\_leaf}/\texttt{min\_samples\_split} pada
+jumlah asli node; partisi child kosong dalam resample berkontribusi 0;
+daun memilih kelas mayoritas dengan tie-break label terkecil; seed
+bootstrap diturunkan dari \texttt{(random\_state,\ id\ node)}. Untuk
+lambda=0 seluruh komputasi bootstrap dilewati dan estimator
+terdegenerasi menjadi CART custom referensi (diverifikasi identik dengan
+implementasi referensi independen pada pengujian unit). Sebuah varian
+eksploratori terpisah (normalisasi \texttt{V/(Gain\^{}2+eps)}) dicatat
+tetapi bukan metode utama. Keterbatasan penting: V(s)
+\emph{scale-dependent} terhadap gain.
+
+\subsubsection{B. Desain evaluasi}\label{b.-desain-evaluasi}
+
+Dataset: 8 dataset klasifikasi tabular UCI (Tabel I). Protokol:
+\emph{repeated stratified nested CV} -- outer 5 fold x 3 ulangan untuk
+masing-masing seed {[}42, 123, 2026{]} (45 evaluasi per dataset-metode,
+split identik untuk semua metode); inner 3-fold stratified untuk
+penyetelan dengan seed deterministik. Preprocessing hanya imputasi
+median yang di-fit pada bagian latih (pipeline). Metrik primer Macro-F1;
+sekunder: balanced accuracy, accuracy, waktu fit/prediksi, jumlah node,
+kedalaman. Stabilitas prediksi diukur terpisah sebagai
+\emph{disagreement} rata-rata pairwise antar model yang dilatih pada 10
+sub-sampel 90\% dari data latih outer, dievaluasi pada outer test yang
+sama -- dilaporkan terpisah dari akurasi.
+
+\begin{longtable}[]{@{}lllll@{}}
+\caption{Inventaris dataset.}\tabularnewline
+\toprule\noalign{}
+Dataset & N & Fitur & Kelas & Sumber \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Dataset & N & Fitur & Kelas & Sumber \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+banknote & 1372 & 4 & 2 & ucimlrepo \\
+glass & 214 & 9 & 6 & ucimlrepo \\
+ionosphere & 351 & 34 & 2 & ucimlrepo \\
+iris & 150 & 4 & 3 & ucimlrepo \\
+seeds & 210 & 7 & 3 & uci\_static\_zip \\
+sonar & 208 & 60 & 2 & ucimlrepo \\
+wdbc & 569 & 30 & 2 & ucimlrepo \\
+wine & 178 & 13 & 3 & ucimlrepo \\
+\end{longtable}
+
+\subsubsection{C. Analisis statistik}\label{c.-analisis-statistik}
+
+Unit inferensi adalah dataset (rata-rata 45 outer fold), bukan fold.
+Perbandingan tiga metode primer (CART sklearn, CART custom lambda=0,
+SPDT) menggunakan uji Friedman dengan dataset sebagai blok; bila omnibus
+memberikan alasan, dilanjutkan Wilcoxon signed-rank berpasangan dengan
+koreksi Holm dan effect size rank-biserial. p \textgreater= 0.05 tidak
+pernah diartikan sebagai bukti kesetaraan. Random forest disertakan
+sebagai benchmark kontekstual non-ekuivalen dan tidak masuk uji omnibus
+primer.
+
+\subsection{IV. Hasil dan Pembahasan}\label{iv.-hasil-dan-pembahasan}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}@{}}
+\caption{Macro-F1 mean +/- sd (deskriptif, fold-level) per dataset dan
+metode.}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Dataset
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+cart\_sklearn
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+cart\_custom
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+spdt
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+random\_forest
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Delta (spdt-cart\_custom)
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Dataset
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+cart\_sklearn
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+cart\_custom
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+spdt
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+random\_forest
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Delta (spdt-cart\_custom)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+banknote & 0.982 +/- 0.008 & 0.981 +/- 0.007 & 0.981 +/- 0.007 & 0.994
++/- 0.004 & +0.0004 \\
+glass & 0.620 +/- 0.097 & 0.609 +/- 0.093 & 0.626 +/- 0.093 & 0.742 +/-
+0.075 & +0.0166 \\
+ionosphere & 0.873 +/- 0.034 & 0.881 +/- 0.038 & 0.879 +/- 0.038 & 0.929
++/- 0.037 & -0.0027 \\
+iris & 0.949 +/- 0.033 & 0.945 +/- 0.038 & 0.944 +/- 0.037 & 0.955 +/-
+0.034 & -0.0008 \\
+seeds & 0.897 +/- 0.032 & 0.906 +/- 0.036 & 0.913 +/- 0.034 & 0.923 +/-
+0.038 & +0.0066 \\
+sonar & 0.719 +/- 0.065 & 0.706 +/- 0.073 & 0.725 +/- 0.061 & 0.833 +/-
+0.065 & +0.0189 \\
+wdbc & 0.925 +/- 0.031 & 0.925 +/- 0.030 & 0.928 +/- 0.030 & 0.956 +/-
+0.023 & +0.0037 \\
+wine & 0.905 +/- 0.047 & 0.905 +/- 0.044 & 0.909 +/- 0.046 & 0.981 +/-
+0.024 & +0.0040 \\
+\end{longtable}
+
+\begin{longtable}[]{@{}ll@{}}
+\caption{Mean rank Macro-F1.}\tabularnewline
+\toprule\noalign{}
+Metode & Mean rank \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Metode & Mean rank \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+spdt & 1.5000 \\
+cart\_sklearn & 2.0000 \\
+cart\_custom & 2.5000 \\
+\end{longtable}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}@{}}
+\caption{Uji statistik dataset-level.}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Uji
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Statistik
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+db
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+p
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\#dataset
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Kendall W
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Keputusan
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Uji
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Statistik
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+db
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+p
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\#dataset
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Kendall W
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Keputusan
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+friedman & 4.0000 & 2 & 0.1353 & 8 & 0.2500 & tidak ada bukti omnibus;
+post-hoc tidak dijalankan \\
+\end{longtable}
+
+\emph{Post-hoc tidak dijalankan: uji omnibus Friedman tidak memberikan
+alasan (p \textgreater= 0.05), sesuai protokol.}
+
+Table: Perbandingan berpasangan (post-hoc).
+
+Ringkasan berpasangan SPDT vs CART custom: \textbf{6 menang / 0 seri / 2
+kalah}, rata-rata Delta Macro-F1 +0.0058.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}@{}}
+\caption{Biaya komputasi.}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Metode
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Fit rata-rata (s)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Fit median (s)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Prediksi rata-rata (s)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Node rata-rata
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Kedalaman rata-rata
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Metode
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Fit rata-rata (s)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Fit median (s)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Prediksi rata-rata (s)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Node rata-rata
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Kedalaman rata-rata
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+cart\_custom & 0.5340 & 0.4163 & 0.0009 & 26.6722 & 5.1000 \\
+cart\_sklearn & 0.2693 & 0.2605 & 0.0010 & 27.4222 & 5.2917 \\
+random\_forest & 1.1169 & 1.0863 & 0.0573 & nan & nan \\
+spdt & 21.4302 & 14.6491 & 0.0010 & 28.5944 & 5.4611 \\
+\end{longtable}
+
+\begin{longtable}[]{@{}lll@{}}
+\caption{Stabilitas prediksi (disagreement; bukan metrik
+akurasi).}\tabularnewline
+\toprule\noalign{}
+Metode & Disagreement rata-rata & SD \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Metode & Disagreement rata-rata & SD \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+cart\_custom & 0.0928 & 0.0853 \\
+cart\_sklearn & 0.0983 & 0.0885 \\
+random\_forest & 0.0271 & 0.0337 \\
+spdt & 0.1014 & 0.0934 \\
+\end{longtable}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\caption{Ablation pada split identik.}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Varian
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+F1 makro rata-rata
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+SD
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Fit rata-rata (s)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Node rata-rata
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Varian
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+F1 makro rata-rata
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+SD
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Fit rata-rata (s)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Node rata-rata
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+A0\_lam0 & 0.8599 & 0.1270 & 0.0201 & 37.6611 \\
+A1\_lam0.1\_B10 & 0.8598 & 0.1256 & 0.0860 & 37.6111 \\
+A1\_lam1\_B10 & 0.8601 & 0.1255 & 0.0862 & 37.5278 \\
+A2\_B20 & 0.8601 & 0.1251 & 0.1136 & 37.4556 \\
+A2\_B5 & 0.8613 & 0.1243 & 0.0711 & 37.4667 \\
+A3\_d3\_leaf1 & 0.8357 & 0.1592 & 0.0371 & 12.8722 \\
+A3\_d3\_leaf5 & 0.8353 & 0.1546 & 0.0373 & 11.8611 \\
+A3\_d8\_leaf1 & 0.8592 & 0.1272 & 0.0821 & 35.2500 \\
+A3\_d8\_leaf5 & 0.8521 & 0.1381 & 0.0820 & 24.7389 \\
+\end{longtable}
+
+\begin{longtable}[]{@{}llll@{}}
+\caption{Frekuensi seleksi hyperparameter SPDT (45 outer fold per
+dataset).}\tabularnewline
+\toprule\noalign{}
+parameter & value & frequency & share \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+parameter & value & frequency & share \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+max\_depth & 5.0000 & 140 & 0.3889 \\
+max\_depth & 8.0000 & 102 & 0.2833 \\
+max\_depth & 3.0000 & 92 & 0.2556 \\
+min\_samples\_leaf & 1.0000 & 201 & 0.5583 \\
+min\_samples\_leaf & 2.0000 & 97 & 0.2694 \\
+min\_samples\_leaf & 5.0000 & 62 & 0.1722 \\
+min\_samples\_split & 2.0000 & 252 & 0.7000 \\
+min\_samples\_split & 5.0000 & 69 & 0.1917 \\
+min\_samples\_split & 10.0000 & 39 & 0.1083 \\
+n\_bootstrap & 5.0000 & 191 & 0.5306 \\
+n\_bootstrap & 20.0000 & 87 & 0.2417 \\
+n\_bootstrap & 10.0000 & 82 & 0.2278 \\
+penalty\_lambda & 10.0000 & 233 & 0.6472 \\
+penalty\_lambda & 0.0000 & 61 & 0.1694 \\
+penalty\_lambda & 0.0100 & 41 & 0.1139 \\
+penalty\_lambda & 1.0000 & 22 & 0.0611 \\
+penalty\_lambda & 0.1000 & 3 & 0.0083 \\
+\end{longtable}
+
+\textbf{Pembahasan.} Hasil bersifat deskriptif condong mendukung SPDT
+tetapi tidak mencapai bukti konfirmatori. SPDT mencatat mean rank
+terbaik (1.500 vs 2.000 CART sklearn dan 2.500 CART custom) dan menang
+pada 6 dari 8 dataset berpasangan terhadap CART custom, namun uji
+Friedman tidak menemukan bukti perbedaan yang cukup (p = 0.1353) dan
+perbandingan eksploratif SPDT-CART custom menghasilkan p mentah 0.078 --
+tidak bertahan pada taraf 5\% dan tidak boleh ditafsirkan sebagai
+signifikan. Dengan hanya 8 dataset, power statistik terbatas; sesuai
+protokol, hasil ini dilaporkan apa adanya dan p \textgreater= 0.05 tidak
+diartikan sebagai kesetaraan.
+
+Temuan penting kedua: penalti stabilitas tidak menurunkan
+\emph{prediction disagreement} -- SPDT justru sedikit lebih tinggi
+(0.101) dibanding CART custom (0.093) dan CART sklearn (0.101). Random
+forest tetap paling stabil (0.027) melalui agregasi ensemble. Dengan
+demikian, janji motivasi metode (stabilitas prediksi lebih baik)
+\textbf{tidak terwujud} pada benchmark ini; penalti variansi gain bukan
+pengganti ensemble.
+
+Temuan ketiga dari ablation pada split identik: besar penalti lambda
+maupun jumlah resample B nyaris tidak mengubah Macro-F1 (semua varian
+lambda dan B di kisaran 0.859-0.861), sedangkan pembatasan
+kedalaman/ukuran daun jauh lebih menentukan (depth 3 turun ke +/-0.836).
+Penyetelan inner cenderung memilih lambda besar (10 pada 64.7\% fold)
+dan B kecil (5 pada 53.1\%), yang mengindikasikan penalti sering dipilih
+tetapi efeknya pada akurasi kecil. Biayanya nyata: waktu fit SPDT +/-40x
+CART custom. Secara keseluruhan, efektivitas penalti variansi bootstrap
+bergantung dataset dan kecil magnitude-nya; simple distance/impurity
+splitting tetap preferable untuk dataset kecil-menengah ini.
+
+\subsection{V. Kesimpulan}\label{v.-kesimpulan}
+
+Penelitian ini mengevaluasi formulasi kandidat SPDT secara reproducible
+dengan nested repeated CV bebas leakage, ablation terkontrol pada split
+identik, dan analisis statistik level-dataset pada 8 dataset UCI. Secara
+deskriptif SPDT memperoleh mean rank terbaik dan menang berpasangan pada
+6 dari 8 dataset terhadap CART custom, tetapi uji Friedman tidak
+memberikan bukti perbedaan yang cukup (chi\^{}2(2)=4.0000, p=0.1353),
+sehingga tidak ada dasar konfirmatori untuk mengklaim peningkatan. Lebih
+lanjut, ukuran stabilitas prediksi tidak membaik dan justru sedikit
+memburuk, sementara biaya komputasi naik +/-40x. Pada kondisi yang
+diuji, kesederhanaan CART tetap preferable. Keterbatasan: delapan
+dataset kecil, impuritas Gini saja, proxy stabilitas berbasis
+disagreement, klaim kebaruan formula-level yang belum established, dan
+belum dibandingkannya kriteria terdekat dari literatur (ANLS, minimax
+split). Pekerjaan lanjutan yang paling bernilai: membandingkan langsung
+dengan stabilisasi bootstrap-node dari literatur, mengkaji normalisasi
+penalti oleh skala gain, dan menguji pada benchmark yang lebih besar.
+
+\subsection{Referensi}\label{referensi}
+
+\protect\phantomsection\label{refs}
+\begin{CSLReferences}{1}{1}
+\bibitem[\citeproctext]{ref-breiman1996bagging}
+Breiman, Leo. 1996. {``Bagging Predictors.''} \emph{Machine Learning} 24
+(2): 123--40. \url{https://doi.org/10.1023/A:1018054314350}.
+
+\bibitem[\citeproctext]{ref-breiman2001randomforests}
+Breiman, Leo. 2001. {``Random Forests.''} \emph{Machine Learning} 45
+(1): 5--32. \url{https://doi.org/10.1023/A:1010933404324}.
+
+\bibitem[\citeproctext]{ref-breiman1984cart}
+Breiman, Leo, Jerome H. Friedman, Richard A. Olshen, and Charles J.
+Stone. 1984. \emph{Classification and Regression Trees}. Wadsworth;
+expanded edition Chapman \& Hall/CRC, 1993.
+
+\bibitem[\citeproctext]{ref-briand2009stability}
+Briand, Bénédicte, Gilles R. Ducharme, Vanessa Parache, and Catherine
+Mercat-Rommens. 2009. {``A Similarity Measure to Assess the Stability of
+Classification Trees.''} \emph{Computational Statistics \& Data
+Analysis} 53 (4): 1208--17.
+\url{https://doi.org/10.1016/j.csda.2008.10.033}.
+
+\bibitem[\citeproctext]{ref-delise2026era}
+Delise, Timothy. 2026. {``Era Splitting -- Invariant Learning for
+Decision Trees.''} \emph{Expert Systems with Applications} 299: 129687.
+\url{https://doi.org/10.1016/j.eswa.2025.129687}.
+
+\bibitem[\citeproctext]{ref-dietterich2000ensemble}
+Dietterich, Thomas G. 2000. {``An Experimental Comparison of Three
+Methods for Constructing Ensembles of Decision Trees: Bagging, Boosting,
+and Randomization.''} \emph{Machine Learning} 40 (2): 139--57.
+\url{https://doi.org/10.1023/A:1007607513941}.
+
+\bibitem[\citeproctext]{ref-domingos2000vfdt}
+Domingos, Pedro, and Geoff Hulten. 2000. {``Mining High-Speed Data
+Streams.''} \emph{Proceedings of the Sixth ACM SIGKDD International
+Conference on Knowledge Discovery and Data Mining (KDD '00)}, 71--80.
+\url{https://doi.org/10.1145/347090.347107}.
+
+\bibitem[\citeproctext]{ref-lee2024anls}
+Lee, Joon, Min Kyu Sim, and Jin-Seon Hong. 2024. {``Assessing Decision
+Tree Stability: A Comprehensive Method for Generating a Stable Decision
+Tree.''} \emph{IEEE Access} 12: 90061--72.
+\url{https://doi.org/10.1109/ACCESS.2024.3419228}.
+
+\bibitem[\citeproctext]{ref-li2002instability}
+Li, Rong-Hua, and Stewart Clarke. 2002. {``Instability of Decision Tree
+Classification Algorithms.''} \emph{Proceedings of the Eighth ACM SIGKDD
+International Conference on Knowledge Discovery and Data Mining (KDD
+'02)}, 570--75. \url{https://doi.org/10.1145/775047.775131}.
+
+\bibitem[\citeproctext]{ref-mirzamomen2017stable}
+Mirzamomen, Zahra, and Mohammad Reza Kangavari. 2017. {``A Framework to
+Induce More Stable Decision Trees for Pattern Classification.''}
+\emph{Pattern Analysis and Applications} 20 (4): 991--1004.
+\url{https://doi.org/10.1007/s10044-016-0542-2}.
+
+\bibitem[\citeproctext]{ref-quinlan1986induction}
+Quinlan, J. Ross. 1986. {``Induction of Decision Trees.''} \emph{Machine
+Learning} 1 (1): 81--106. \url{https://doi.org/10.1023/A:1022643204877}.
+
+\bibitem[\citeproctext]{ref-strobl2007bias}
+Strobl, Carolin, Anne-Laure Boulesteix, and Thomas Augustin. 2007.
+{``Unbiased Split Selection for Classification Trees Based on the {G}ini
+Index.''} \emph{Computational Statistics \& Data Analysis} 52 (1):
+483--501. \url{https://doi.org/10.1016/j.csda.2006.12.030}.
+
+\bibitem[\citeproctext]{ref-turney1995stability}
+Turney, Peter D. 1995. {``Bias and the Quantification of Stability.''}
+\emph{Machine Learning} 20 (1): 23--33.
+\url{https://doi.org/10.1007/BF00993473}.
+
+\bibitem[\citeproctext]{ref-wang2017tsallis}
+Wang, Yisen, Shu-Tao Xia, and Jia Wu. 2017. {``A Less-Greedy Two-Term
+Tsallis Entropy Information Metric Approach for Decision Tree
+Classification.''} \emph{Knowledge-Based Systems} 120: 34--42.
+\url{https://doi.org/10.1016/j.knosys.2016.12.021}.
+
+\bibitem[\citeproctext]{ref-yang2019pairgain}
+Yang, Bo-Bo, Wei Gao, and Min Li. 2019. {``On the Robust Splitting
+Criterion of Random Forest.''} \emph{2019 IEEE 19th International
+Conference on Data Mining (ICDM)}, 1420--25.
+\url{https://doi.org/10.1109/ICDM.2019.00184}.
+
+\end{CSLReferences}
+
+\end{document}

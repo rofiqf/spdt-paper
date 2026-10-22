@@ -22,10 +22,16 @@ diasumsikan.** Prior-art gate wajib dilakukan sebelum eksperimen besar
 .venv/bin/python -m pytest -q                 # unit tests
 .venv/bin/python scripts/run_pilot.py         # pilot kecil (Stage 4)
 .venv/bin/python scripts/run_full.py          # nested CV penuh (Stage 6)
+.venv/bin/python scripts/run_ablation.py      # ablation split identik (Stage 7)
+.venv/bin/python scripts/analyze_results.py   # ringkasan statistik
+.venv/bin/python scripts/make_figures.py      # semua figure
+.venv/bin/python scripts/validate_reproducibility.py  # repro-bit-exact
+bash scripts/build_pdf.sh                     # paper.pdf IEEEtran dari draft.md
 ```
 
-Lihat `docs/method.md` untuk definisi metode dan `docs/limitations.md`
-untuk keterbatasan yang wajib dilaporkan.
+Lihat `docs/method.md` untuk definisi metode, `docs/limitations.md`
+untuk keterbatasan wajib, dan `docs/protocol_freeze.md` untuk protokol
+beku + addendum (fix determinisme seed CART sklearn).
 
 ## Struktur
 

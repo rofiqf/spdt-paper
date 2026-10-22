@@ -1,0 +1,18 @@
+{
+  "dataset": "banknote",
+  "source": "ucimlrepo",
+  "uci_id": 267,
+  "doi": "10.24432/C55P57",
+  "source_url": "https://archive.ics.uci.edu/dataset/267/banknote+authentication",
+  "downloaded_at_utc": "2026-10-22T04:31:08.212765+00:00",
+  "n_samples": 1372,
+  "n_features": 4,
+  "target_name": "class",
+  "n_classes": 2,
+  "class_distribution": {
+    "0": 762,
+    "1": 610
+  },
+  "missing_values": false,
+  "sha256": "e1dbb23bb6b7e9d8616b14ad846a7c5477c26e1f812bd4d2ae110dc94e5252ec"
+}

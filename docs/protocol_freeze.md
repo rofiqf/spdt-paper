@@ -41,3 +41,16 @@ diubah berdasarkan hasil outer-test. File resmi: `configs/experiment.yaml`.
 - Tidak menambah/mengurangi dataset setelah freeze.
 - p ≥ 0.05 tidak boleh diartikan sebagai bukti kesetaraan.
 - Fold = observasi deskriptif; inferensi pada level dataset.
+
+## Addendum pasca-eksperimen (2026-10-22)
+
+Validasi reproducibility menemukan bahwa `sklearn.tree.
+DecisionTreeClassifier(random_state=None)` **nondeterministik antar-fit**
+(tie-breaking mengonsumsi RNG global) pada sklearn 1.9.1, sehingga baris
+`cart_sklearn` hasil run utama (2.9 jam) tidak dapat direproduksi bit-exact.
+Tindakan: `make_sklearn_cart` diberi `random_state=0` (default tetap),
+metode `cart_sklearn` dijalankan ulang di seluruh dataset dengan outer
+splits identik (`scripts/rerun_method.py`), dan baris lama diganti secara
+atomik. Metode lain (`cart_custom`, `spdt`, `random_forest`) ternyata sudah
+deterministik (seed eksplisit) dan hasilnya tidak berubah. Keputusan ini
+bukan tuning berdasarkan outer test — hanya perbaikan determinisme.
