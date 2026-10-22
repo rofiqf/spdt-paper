@@ -53,6 +53,15 @@ Pilot iris memakan ~13 menit; bottleneck = RandomForest 300 pohon dievaluasi
 Proyeksi penuh setelah amendemen: ~2.5-4 jam. Protocol dianggap FROZEN
 setelah amendemen ini; deviasi berikutnya (bila ada) wajib didokumentasikan
 ulang.
+
+## Amendemen #2 (2026-10-22, sebelum dataset ke-4 selesai)
+
+Pengukuran langsung: ANLS cap 1500 -> glass 1.3 s/fit, wdbc 8.9 s/fit
+-> wdbc+banknote saja ~3 jam (tidak proporsional). Paper melaporkan
+median RB=23 iterasi per node (mean 364); cap hanya memotong node
+patologis. **ANLS max_iterations 1500 -> 400** untuk M5. Full run
+di-restart; baris iris/wine/seeds hasil run pertama dibuang (regenerasi
+penuh agar satu manifest, satu protokol).
 - D runtime_tradeoff: agregasi waktu + counter + peak memory probe
   (tracemalloc, satu proses, wdbc) — estimasi terdokumentasi, bukan
   benchmark terkontrol. Output: runtime_tradeoff.csv.

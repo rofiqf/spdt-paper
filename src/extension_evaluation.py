@@ -108,10 +108,13 @@ def make_method_pipes(struct: dict, lam2: float, lam3: float,
             ("clf", RandomForestClassifier(
                 n_estimators=cfg.get("rf_trees", 100),
                 random_state=20261021, n_jobs=-1))]),
-        # M5: ANLS dengan parameter default paper (tidak ditune)
+        # M5: ANLS dengan parameter default paper (tidak ditune);
+        # max_iterations=400 (amendemen #2: paper median RB=23; cap hanya
+        # memotong node patologis)
         "anls": Pipeline([
             ("imputer", SimpleImputer(strategy="median")),
-            ("clf", ANLSTreeClassifier(random_state=0))]),
+            ("clf", ANLSTreeClassifier(random_state=0,
+                                       max_iterations=400))]),
     }
 
 
