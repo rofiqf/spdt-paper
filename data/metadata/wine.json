@@ -1,0 +1,19 @@
+{
+  "dataset": "wine",
+  "source": "ucimlrepo",
+  "uci_id": 109,
+  "doi": "10.24432/C5PC7J",
+  "source_url": "https://archive.ics.uci.edu/dataset/109/wine",
+  "downloaded_at_utc": "2026-10-22T01:51:21.375730+00:00",
+  "n_samples": 178,
+  "n_features": 13,
+  "target_name": "class",
+  "n_classes": 3,
+  "class_distribution": {
+    "1": 59,
+    "2": 71,
+    "3": 48
+  },
+  "missing_values": false,
+  "sha256": "6fbb4acf981f4e67e1a87d376bb93a1a4c772b145145903fcb58687a38073baa"
+}

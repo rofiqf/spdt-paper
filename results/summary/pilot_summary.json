@@ -1,0 +1,70 @@
+{
+  "pilot_datasets": [
+    "iris",
+    "wine",
+    "wdbc"
+  ],
+  "bench_max_seconds": 0.270239584002411,
+  "bench_by_lam_B": [
+    {
+      "lambda": 0.0,
+      "B": 5,
+      "fit_median_seconds": 0.008548574995074887
+    },
+    {
+      "lambda": 0.0,
+      "B": 10,
+      "fit_median_seconds": 0.008392901996558066
+    },
+    {
+      "lambda": 0.0,
+      "B": 20,
+      "fit_median_seconds": 0.00833091600361513
+    },
+    {
+      "lambda": 0.01,
+      "B": 5,
+      "fit_median_seconds": 0.02858226299576927
+    },
+    {
+      "lambda": 0.01,
+      "B": 10,
+      "fit_median_seconds": 0.03334863599593518
+    },
+    {
+      "lambda": 0.01,
+      "B": 20,
+      "fit_median_seconds": 0.04246965500351507
+    },
+    {
+      "lambda": 0.1,
+      "B": 5,
+      "fit_median_seconds": 0.02848270200047409
+    },
+    {
+      "lambda": 0.1,
+      "B": 10,
+      "fit_median_seconds": 0.033224241000425536
+    },
+    {
+      "lambda": 0.1,
+      "B": 20,
+      "fit_median_seconds": 0.04231862800224917
+    },
+    {
+      "lambda": 1.0,
+      "B": 5,
+      "fit_median_seconds": 0.028830234994529746
+    },
+    {
+      "lambda": 1.0,
+      "B": 10,
+      "fit_median_seconds": 0.03330975900462363
+    },
+    {
+      "lambda": 1.0,
+      "B": 20,
+      "fit_median_seconds": 0.04253885499929311
+    }
+  ]
+}
