@@ -1,0 +1,254 @@
+% SPDT paper -- IEEE conference manuscript
+% Official IEEE template: IEEEtran.cls v1.8+ (conference mode)
+% Compile: latexmk -pdf main.tex  (see paper/README.md)
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+
+\usepackage{cite}                 % IEEE-style numeric citation compression
+\usepackage{amsmath,amsthm,amsfonts}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{textcomp}
+\usepackage{xurl}                 % line-breakable URLs in references
+\usepackage{graphicx}
+
+% ---------------------------------------------------------------------------
+% TODO(AUTHORSHIP) -- SIX FACULTY CO-AUTHORS REQUIRED BY THE COURSE.
+% Identities have NOT been confirmed by the user. Do not fabricate names.
+% After confirmation, extend the \author block with:
+%   \and
+%   \IEEEauthorblockN{<Full Name>}
+%   \IEEEauthorblockA{<Department>\\<University>\\City, Country\\email}
+% The first author (student) must remain first.
+% ---------------------------------------------------------------------------
+
+\title{Stability-Penalized Split Selection for Decision Tree Classification:\\
+A Reproducible Multi-Dataset Evaluation}
+
+\author{\IEEEauthorblockN{Rofiq Fauzi}
+\IEEEauthorblockA{Magister Artificial Intelligence\\
+Universitas Dian Nuswantoro\\
+Semarang, Indonesia\\
+p36202600047@mhs.dinus.ac.id}}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+The CART decision tree is fast and interpretable, but its structure is
+unstable: small changes in the training data can alter the selected split
+and, ultimately, the predictions. This study evaluates a simple candidate
+formulation, named Stability-Penalized Decision Tree (SPDT), in which each
+candidate split is scored as Gini gain minus a weighted penalty on the
+variance of that gain over bootstrap resamples of the node data.
+A literature search up to 22 October 2026 found no formula-level
+equivalent of this criterion, but the tree-stability research space is
+crowded; the formulation is therefore positioned as a candidate, not as a
+novelty claim. The evaluation uses eight UCI tabular classification
+datasets with repeated nested cross-validation (5 folds $\times$ 3 repeats
+on three seeds), hyperparameter tuning in the inner loop, and Macro-F1 as
+the primary metric. Results: SPDT versus custom CART ($\lambda{=}0$)
+records six wins, zero ties, and two losses with a mean Macro-F1
+difference of $+0.0058$. The Friedman test gives
+$\chi^2(2){=}4.0000$, $p{=}0.1353$, Kendall's $W{=}0.2500$ --- insufficient
+evidence to reject the null hypothesis, so confirmatory post-hoc
+comparisons were not run. Ablations show that the penalty strength
+$\lambda$ and the number of resamples $B$ barely affect Macro-F1, tree
+depth constraints matter far more, and the prediction-stability measure of
+SPDT is slightly worse than that of custom CART at roughly $40\times$ the
+fitting time. These findings are an honest null result: across the eight
+small-to-medium datasets tested, the bootstrap gain-variance penalty
+provides no benefit sufficient to outweigh the simplicity of CART, without
+ruling out benefits in other data regimes.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Decision trees, split criterion, bootstrap stability, gain variance,
+nested cross-validation, nonparametric statistical comparison.
+\end{IEEEkeywords}
+
+\section{Introduction}
+\IEEEPARstart{D}{ecision} trees are nonparametric classifiers that
+recursively partition the feature space. The CART split criterion selects
+the candidate (feature, threshold) that maximizes the reduction of Gini
+impurity \cite{breiman1984cart,quinlan1986induction}. However, tree
+structure is known to be unstable: small perturbations of the training
+data can change the selected split \cite{li2002instability}, and
+consequently the predictions --- the very phenomenon behind bagging and
+random forests \cite{breiman1996bagging,breiman2001randomforests,dietterich2000ensemble}.
+
+Various approaches have reduced this instability at different levels:
+significance filtering, structural restriction, ensemble aggregation, or
+stable model selection \cite{turney1995stability,briand2009stability,lee2024anls,mirzamomen2017stable}.
+What is rarely tested directly is the narrower question:
+\textbf{can a bootstrap variance penalty on the split gain, subtracted
+directly from the split score, improve out-of-sample Macro-F1 and/or
+prediction stability compared with standard CART under repeated
+resampling, at acceptable runtime cost?}
+
+Null hypothesis: no systematic improvement over the baseline across
+independent datasets. No hypothesis is made that SPDT must win. The
+claimed contributions are limited to (i)~an explicit candidate
+formulation, (ii)~a reproducible implementation and audit, (iii)~a
+leakage-free nested-CV evaluation, and (iv)~honest ablation and
+statistical analysis of both positive and negative outcomes.
+
+\section{Related Work}
+\subsection{Decision Tree Stability}
+Structural tree instability was formalized by Li and Clarke
+\cite{li2002instability}. Quantitative stability and tree-similarity
+measures were developed by Turney \cite{turney1995stability} and Briand
+et al.\ \cite{briand2009stability}, who also evaluated bootstrap-based
+node-level stabilization (the NLS/Dannegger lineage). Lee et al.\
+\cite{lee2024anls} proposed ANLS, which runs bootstrap iterations at each
+node and selects the most frequently chosen predictor --- the closest
+resampling-per-node mechanism to this study, but its aggregation is
+frequency voting rather than a gain-variance penalty. Mirzamomen and
+Kangavari \cite{mirzamomen2017stable} stabilize trees through
+multi-attribute split tests.
+
+\subsection{Alternative Split Criteria}
+Two-term Tsallis entropy criteria \cite{wang2017tsallis}, label-noise-robust
+criteria \cite{yang2019pairgain}, and bias-corrected Gini split selection
+\cite{strobl2007bias} show that the ``modify the split score'' space is
+active. Hoeffding-bound data-stream trees \cite{domingos2000vfdt} decide
+splits only when the gain estimate is separated from the runner-up by a
+confidence interval, and gradient-boosted trees regularize splitting with
+a minimum-split-gain threshold \cite{chen2016xgboost}. Delise
+\cite{delise2026era} scores split consistency across environments in
+boosting. Penalizing a resampled score by its variance is also known
+outside trees (the mean--variance pattern in model selection). None of the
+works we verified contains the formula
+$\mathrm{Gain}-\lambda\,\mathrm{Var}_{\text{bootstrap}}[\mathrm{Gain}]$;
+nevertheless, a negative search result is not proof of novelty, and the
+formulation remains a candidate.
+
+\section{Method}
+\subsection{Proposed Split Criterion}
+For a node with dataset $D$ (training portion only), class
+probabilities $p(c\mid D)$, and $C$ classes, the Gini impurity is
+\begin{equation}
+\operatorname{Gini}(D) = 1 - \sum_{c=1}^{C} p(c\mid D)^2 .
+\label{eq:gini}
+\end{equation}
+For a candidate split $s$ partitioning $D$ into $D_L$ and $D_R$, the CART
+gain is
+\begin{equation}
+\operatorname{Gain}(s,D) = \operatorname{Gini}(D)
+- \tfrac{|D_L|}{|D|}\operatorname{Gini}(D_L)
+- \tfrac{|D_R|}{|D|}\operatorname{Gini}(D_R).
+\label{eq:gain}
+\end{equation}
+From $D$ we draw $B$ bootstrap resamples $D^{(b)}$ (sampling with
+replacement, node rows only). With the candidate $(s)$ fixed, the
+resampled gain variance is
+\begin{equation}
+V(s) = \operatorname{Var}_{b}\!\left[\operatorname{Gain}(s,D^{(b)})\right],
+\qquad b = 1,\dots,B,
+\label{eq:var}
+\end{equation}
+and the proposed score is
+\begin{equation}
+\boxed{\;\operatorname{Score}(s) = \operatorname{Gain}(s,D) - \lambda\, V(s)\;}
+\label{eq:score}
+\end{equation}
+where $\lambda \geq 0$ controls the penalty strength. Here $D$ is the
+current node's training data, $s$ is a (feature, threshold) candidate,
+$B$ is the number of bootstrap resamples, and $\lambda$ weights the
+penalty; $\lambda{=}0$ disables the penalty entirely. Candidate thresholds
+are midpoints between sorted distinct adjacent values;
+$\mathrm{min\_samples\_leaf}$ and $\mathrm{min\_samples\_split}$ are applied
+to original node counts; an empty child partition inside a resample
+contributes zero; leaves predict the majority class with smallest-label
+tie-breaking; bootstrap seeds derive deterministically from
+$(\mathrm{random\_state}, \mathrm{node\ id})$. For $\lambda{=}0$ the
+estimator degenerates to a custom CART reference, verified identical to an
+independent reference implementation in unit tests. A separate exploratory
+variant normalizing $V(s)$ by $\operatorname{Gain}(s,D)^2+\varepsilon$ is
+documented but is not the main method. An important limitation is that
+$V(s)$ is scale-dependent on the gain.
+
+\subsection{Evaluation Design}
+We use eight UCI tabular classification datasets (Table~\ref{tab:inventory}).
+The protocol is repeated stratified nested CV: an outer loop of 5 folds
+$\times$ 3 repeats for each of the seeds $[42,123,2026]$ (45 evaluations
+per dataset--method, identical splits for all methods), and an inner
+stratified 3-fold loop for tuning with deterministically derived seeds.
+Preprocessing is median imputation fitted on the training portion only.
+The primary metric is Macro-F1; secondary measures are balanced accuracy,
+accuracy, fit/predict time, node count, and tree depth. Prediction
+stability is measured separately as mean pairwise disagreement among
+models trained on ten 90\% subsamples of each outer training fold,
+evaluated on the same outer test fold, and is reported separately from
+accuracy. The primary comparison set is sklearn CART, custom CART
+($\lambda{=}0$), and SPDT; a random forest serves as a non-equivalent
+contextual benchmark outside the omnibus test.
+
+\subsection{Statistical Analysis}
+The unit of inference is the dataset (averaged over the 45 outer folds),
+never the individual fold. The three primary methods are compared with the
+Friedman test using datasets as blocks; only when the omnibus test
+provides grounds for it are paired Wilcoxon signed-rank tests with Holm
+correction and rank-biserial effect sizes run. $p \geq 0.05$ is never
+interpreted as evidence of equivalence.
+
+\section{Results and Discussion}
+Table~\ref{tab:performance} reports per-dataset Macro-F1 (mean $\pm$ SD
+over the 45 outer folds, descriptive only). Table~\ref{tab:ranks} reports
+mean ranks, and Table~\ref{tab:friedman} reports the omnibus test. SPDT
+versus custom CART records six wins, zero ties, and two losses with mean
+Macro-F1 difference $+0.0058$. The Friedman test gives
+$\chi^2(2)=4.0000$, $p=0.1353$, Kendall's $W=0.2500$ --- insufficient
+evidence to reject the null hypothesis, so confirmatory post-hoc
+comparisons were not run. The exploratory SPDT--custom CART Wilcoxon
+comparison gives a raw $p=0.078$, which does not survive the 5\% level
+and must not be read as significant; with only eight datasets, statistical
+power is limited. These results are reported as they stand.
+
+\input{tables_generated}
+
+A second finding concerns stability. The bootstrap-variance penalty does
+\emph{not} reduce prediction disagreement: SPDT is slightly worse
+($0.101$) than custom CART ($0.093$) and sklearn CART ($0.098$), while
+the random forest remains the most stable ($0.027$) through ensemble
+aggregation (Table~\ref{tab:stability}). The motivating promise of the
+method --- better prediction stability --- therefore does not materialize
+on this benchmark; a gain-variance penalty is no substitute for
+ensembling.
+
+Third, the identical-split ablations (Table~\ref{tab:ablation}) show that
+neither the penalty strength $\lambda$ nor the number of resamples $B$
+materially changes Macro-F1 (all $\lambda$ and $B$ variants fall in the
+$0.859$--$0.861$ range), whereas depth/leaf constraints matter far more
+(depth 3 drops to about $0.836$). Inner tuning frequently selects a large
+$\lambda$ (10 on 64.7\% of folds) and a small $B$ (5 on 53.1\%), per
+Table~\ref{tab:hyper}, indicating the penalty is often selected but has a
+small effect on accuracy. The cost is real: SPDT fitting time is roughly
+$40\times$ that of custom CART (Table~\ref{tab:runtime}). Overall, the
+effectiveness of the bootstrap gain-variance penalty is dataset-dependent
+and small in magnitude; simple impurity-based splitting remains
+preferable for these small-to-medium datasets.
+
+\section{Conclusion}
+This study evaluated the SPDT candidate formulation reproducibly, with
+leakage-free repeated nested CV, controlled ablation on identical splits,
+and dataset-level statistical analysis on eight UCI datasets.
+Descriptively, SPDT achieved the best mean rank and won six of eight
+paired comparisons against custom CART, but the Friedman test provided
+insufficient evidence of a difference ($\chi^2(2)=4.0000$, $p=0.1353$),
+so there is no confirmatory basis for claiming improvement. Moreover, the
+prediction-stability measure did not improve and was slightly worse,
+while compute cost rose roughly $40\times$. Under the tested conditions,
+the simplicity of CART remains preferable. Limitations: eight small
+datasets, Gini impurity only, a single disagreement-based stability proxy,
+a formula-level novelty claim that is not established, and the absence of
+the closest literature criteria (ANLS, minimax split) as comparators. The
+most valuable future work is direct comparison with node-level bootstrap
+stabilization from the literature, a theoretically grounded penalty
+normalization by gain scale, and evaluation on larger benchmarks.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}
