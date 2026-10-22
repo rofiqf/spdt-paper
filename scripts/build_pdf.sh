@@ -1,20 +1,27 @@
 #!/usr/bin/env bash
-# Build paper.pdf (IEEEtran 2 kolom) dari draft.md.
+# Build paper.pdf (IEEEtran 2 kolom) dari draft markdown.
+# Pemakaian: build_pdf.sh [input.md] [output.pdf]
+#   default: build_pdf.sh draft.md paper.pdf
 # Membutuhkan: pandoc (~/bin), TinyTeX (~/.TinyTeX).
 set -euo pipefail
 cd "$(dirname "$0")/../paper"
 export PATH="$HOME/.TinyTeX/bin/x86_64-linux:$HOME/bin:$PATH"
+IN="${1:-draft.md}"
+OUT="${2:-paper.pdf}"
+BASE="${OUT%.pdf}"
 
-pandoc draft.md -s -o paper_raw.tex \
+pandoc "$IN" -s -o "${BASE}_raw.tex" \
   --citeproc --bibliography references.bib \
   -V documentclass=IEEEtran -V classoption=conference \
   -V header-includes='\usepackage{times}' \
   -V linkcolor=black -V urlcolor=black
 
+export RAW_TEX="${BASE}_raw.tex" OUT_TEX="${BASE}.tex"
 python3 - <<'EOF'
+import os
 import re
 
-lines = open("paper_raw.tex").read().splitlines()
+lines = open(os.environ["RAW_TEX"]).read().splitlines()
 out = []
 state = "normal"
 spec = ""
@@ -104,12 +111,12 @@ while i < len(lines):
             state = "in_tabular"
     i += 1
 
-open("paper.tex", "w").write("\n".join(out) + "\n")
+open(os.environ["OUT_TEX"], "w").write("\n".join(out) + "\n")
 print("tables converted:",
       sum(1 for l in out if l.startswith(r"\begin{table*}")),
       "| captions:", sum(1 for l in out if l.startswith(r"\caption")))
 EOF
 
-pdflatex -interaction=nonstopmode -halt-on-error paper.tex >/dev/null
-pdflatex -interaction=nonstopmode -halt-on-error paper.tex >/dev/null
-echo "OK: paper/paper.pdf ($(pdfinfo paper.pdf 2>/dev/null | grep Pages || echo 'pages?'))"
+pdflatex -interaction=nonstopmode -halt-on-error "${BASE}.tex" >/dev/null
+pdflatex -interaction=nonstopmode -halt-on-error "${BASE}.tex" >/dev/null
+echo "OK: paper/${OUT} ($(pdfinfo "${OUT}" 2>/dev/null | grep Pages || echo 'pages?'))"

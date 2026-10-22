@@ -21,7 +21,10 @@ figures:
 	$(PYTHON) scripts/make_figures.py
 
 paper:
-	$(PYTHON) scripts/build_paper.py
+	$(PYTHON) scripts/build_paper.py --lang id
+	$(PYTHON) scripts/build_paper.py --lang en
+	bash scripts/build_pdf.sh
+	bash scripts/build_pdf.sh draft_en.md paper_en.pdf
 
 clean:
 	rm -f results/raw/fold_metrics.csv results/raw/stability_metrics.csv

@@ -1,4 +1,4 @@
-"""Stage 8: rakit paper/draft.md (Bahasa Indonesia) dari artefak hasil.
+"""Rakit paper (Bahasa Indonesia / English) dari artefak hasil.
 
 Aturan integritas:
 - Placeholder hasil HARUS tersedia di results/summary/; jika tidak ->
@@ -9,6 +9,7 @@ Aturan integritas:
 
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -40,11 +41,90 @@ def df_to_md(df: pd.DataFrame, floatfmt=4) -> str:
     return "\n".join([header, sep, *rows])
 
 
-def fmt_ms(x):
-    return f"{x*1000:.1f} ms"
+L = {
+    "id": {
+        "ranks": {"method": "Metode", "mean_rank": "Mean rank"},
+        "stats": {"test": "Uji", "statistic": "Statistik", "df": "db",
+                  "p_value": "p", "n_datasets": "#dataset",
+                  "kendall_w": "Kendall W", "decision": "Keputusan"},
+        "runtime": {"method": "Metode", "fit_mean": "Fit rata-rata (s)",
+                    "fit_median": "Fit median (s)",
+                    "predict_mean": "Prediksi rata-rata (s)",
+                    "nodes_mean": "Node rata-rata",
+                    "depth_mean": "Kedalaman rata-rata"},
+        "stab": {"method": "Metode",
+                 "disagreement_mean": "Disagreement rata-rata",
+                 "disagreement_sd": "SD"},
+        "abl": {"variant": "Varian", "f1_mean": "F1 makro rata-rata",
+                "f1_sd": "SD", "fit_mean": "Fit rata-rata (s)",
+                "nodes_mean": "Node rata-rata"},
+        "inv": {"dataset": "Dataset", "n_samples": "N",
+                "n_features": "Fitur", "n_classes": "Kelas",
+                "source": "Sumber"},
+        "posthoc": {"comparison": "Bandingkan", "median_delta": "Median Delta F1",
+                    "raw_p": "p mentah", "holm_p": "p Holm",
+                    "reject_h0": "Tolak H0", "rank_biserial": "r_rb"},
+        "no_posthoc": ("_Post-hoc tidak dijalankan: uji omnibus Friedman "
+                       "tidak memberikan alasan (p >= 0.05), sesuai "
+                       "protokol._"),
+        "na": "_Tidak tersedia._",
+        "decision": {
+            "no_omnibus_evidence_posthoc_not_run":
+                "tidak ada bukti omnibus; post-hoc tidak dijalankan",
+            "omnibus_significant_posthoc_justified":
+                "omnibus signifikan; post-hoc dibenarkan",
+        },
+        "template": "template.md",
+        "out": "draft.md",
+        "title": ("Stability-Penalized Split Selection for Decision Tree "
+                  "Classification: Sebuah Evaluasi Multi-Dataset yang "
+                  "Reproducible"),
+    },
+    "en": {
+        "ranks": {"method": "Method", "mean_rank": "Mean rank"},
+        "stats": {"test": "Test", "statistic": "Statistic", "df": "df",
+                  "p_value": "p", "n_datasets": "#datasets",
+                  "kendall_w": "Kendall W", "decision": "Decision"},
+        "runtime": {"method": "Method", "fit_mean": "Fit mean (s)",
+                    "fit_median": "Fit median (s)",
+                    "predict_mean": "Predict mean (s)",
+                    "nodes_mean": "Mean nodes",
+                    "depth_mean": "Mean depth"},
+        "stab": {"method": "Method",
+                 "disagreement_mean": "Mean disagreement",
+                 "disagreement_sd": "SD"},
+        "abl": {"variant": "Variant", "f1_mean": "Mean macro F1",
+                "f1_sd": "SD", "fit_mean": "Fit mean (s)",
+                "nodes_mean": "Mean nodes"},
+        "inv": {"dataset": "Dataset", "n_samples": "N",
+                "n_features": "Features", "n_classes": "Classes",
+                "source": "Source"},
+        "posthoc": {"comparison": "Comparison", "median_delta": "Median Delta F1",
+                    "raw_p": "Raw p", "holm_p": "Holm p",
+                    "reject_h0": "Reject H0", "rank_biserial": "r_rb"},
+        "no_posthoc": ("_Post-hoc not run: the Friedman omnibus test gave "
+                       "no grounds (p >= 0.05), per protocol._"),
+        "na": "_Not available._",
+        "decision": {
+            "no_omnibus_evidence_posthoc_not_run":
+                "no omnibus evidence; post-hoc not run",
+            "omnibus_significant_posthoc_justified":
+                "omnibus significant; post-hoc justified",
+        },
+        "template": "template_en.md",
+        "out": "draft_en.md",
+        "title": ("Stability-Penalized Split Selection for Decision Tree "
+                  "Classification: A Reproducible Multi-Dataset Evaluation"),
+    },
+}
 
 
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--lang", choices=["id", "en"], default="id")
+    args = ap.parse_args()
+    T = L[args.lang]
+
     perf = need(SUM / "dataset_metrics.csv")
     stats = need(SUM / "statistical_tests.csv")
     runtime = need(SUM / "runtime.csv")
@@ -57,17 +137,12 @@ def main():
     paired = need(SUM / "paired_differences.csv")
 
     fr = stats.iloc[0]
-    pretty_decision = {
-        "no_omnibus_evidence_posthoc_not_run":
-            "tidak ada bukti omnibus; post-hoc tidak dijalankan",
-        "omnibus_significant_posthoc_justified":
-            "omnibus signifikan; post-hoc dibenarkan",
-    }.get(str(fr["decision"]), str(fr["decision"]))
-    stats = stats.assign(decision=pretty_decision)
+    stats = stats.assign(decision=T["decision"].get(
+        str(fr["decision"]), str(fr["decision"])))
     posthoc_path = SUM / "posthoc_wilcoxon_holm.csv"
     posthoc = (pd.read_csv(posthoc_path) if posthoc_path.exists() else None)
 
-    # tabel performa: mean ± sd (deskriptif) per dataset x metode
+    # tabel performa: mean +/- sd (deskriptif) per dataset x metode
     folds = pd.read_csv(ROOT / "results" / "raw" / "fold_metrics.csv")
     pm = folds.groupby(["dataset", "method"])["f1_macro"].agg(
         ["mean", "std"]).reset_index()
@@ -79,47 +154,30 @@ def main():
     for ds in pivot_m.index:
         row = {"Dataset": ds}
         for m in methods:
-            row[m] = f"{pivot_m.loc[ds, m]:.3f} ± {pivot_s.loc[ds, m]:.3f}"
-        row["Δ (spdt−cart_custom)"] = (
+            row[m] = f"{pivot_m.loc[ds, m]:.3f} +/- {pivot_s.loc[ds, m]:.3f}"
+        row["Delta (spdt-cart_custom)"] = (
             f"{pivot_m.loc[ds, 'spdt'] - pivot_m.loc[ds, 'cart_custom']:+.4f}")
         perf_rows.append(row)
     tbl_perf = df_to_md(pd.DataFrame(perf_rows), floatfmt=3)
 
-    tbl_ranks = df_to_md(ranks.rename(columns={"method": "Metode",
-                                               "mean_rank": "Mean rank"}))
-    tbl_stat = df_to_md(stats.rename(columns={
-        "test": "Uji", "statistic": "Statistik", "df": "db",
-        "p_value": "p", "n_datasets": "#dataset", "kendall_w": "Kendall W",
-        "decision": "Keputusan"}))
-    rt = runtime.rename(columns={"method": "Metode", "fit_mean": "Fit rata-rata (s)",
-                                 "fit_median": "Fit median (s)",
-                                 "predict_mean": "Prediksi rata-rata (s)",
-                                 "nodes_mean": "Node rata-rata",
-                                 "depth_mean": "Kedalaman rata-rata"})
+    tbl_ranks = df_to_md(ranks.rename(columns=T["ranks"]))
+    tbl_stat = df_to_md(stats.rename(columns=T["stats"]))
+    rt = runtime.rename(columns=T["runtime"])
     tbl_rt = df_to_md(rt[[c for c in rt.columns if c != "fit_median"]])
-    tbl_stab = df_to_md(stab.rename(columns={
-        "method": "Metode", "disagreement_mean": "Disagreement rata-rata",
-        "disagreement_sd": "SD"})) if stab is not None else "_Tidak tersedia._"
-    tbl_abl = df_to_md(abl.rename(columns={
-        "variant": "Varian", "f1_mean": "F1 makro rata-rata",
-        "f1_sd": "SD", "fit_mean": "Fit rata-rata (s)",
-        "nodes_mean": "Node rata-rata"})) if abl is not None else "_Tidak tersedia._"
+    tbl_stab = (df_to_md(stab.rename(columns=T["stab"]))
+                if stab is not None else T["na"])
+    tbl_abl = (df_to_md(abl.rename(columns=T["abl"]))
+               if abl is not None else T["na"])
 
-    # inventory dataset dari metadata
     inv_rows = []
     for meta_p in sorted((DATA / "metadata").glob("*.json")):
         m = json.loads(meta_p.read_text())
-        inv_rows.append({"Dataset": m["dataset"], "N": m["n_samples"],
-                         "Fitur": m["n_features"], "Kelas": m["n_classes"],
-                         "Sumber": m["source"]})
-    tbl_inv = df_to_md(pd.DataFrame(inv_rows))
-
-    # frekuensi hyperparameter (top saja)
+        inv_rows.append({"dataset": m["dataset"], "n_samples": m["n_samples"],
+                         "n_features": m["n_features"],
+                         "n_classes": m["n_classes"], "source": m["source"]})
+    tbl_inv = df_to_md(pd.DataFrame(inv_rows).rename(columns=T["inv"]))
     tbl_hyp = df_to_md(hyps)
 
-    # paired delta ringkas spdt vs cart_custom (urutan kolom pivot abjad:
-    # pasangan tersimpan sebagai cart_custom vs spdt; delta didefinisikan
-    # spdt - cart_custom)
     pdelta = paired[(paired.method_a == "cart_custom") &
                     (paired.method_b == "spdt")].copy()
     pdelta["delta"] = -pdelta["delta"]
@@ -136,15 +194,10 @@ def main():
             raise RuntimeError(
                 f"Cannot build empirical paper: figure missing: {req}")
 
-    posthoc_md = (df_to_md(posthoc.rename(columns={
-        "comparison": "Bandingkan", "median_delta": "Median Δ F1",
-        "raw_p": "p mentah", "holm_p": "p Holm",
-        "reject_h0": "Tolak H0", "rank_biserial": "r_rb"}))
-        if posthoc is not None else
-        "_Post-hoc tidak dijalankan: uji omnibus Friedman tidak memberikan "
-        "alasan (p ≥ 0.05), sesuai protokol._")
+    posthoc_md = (df_to_md(posthoc.rename(columns=T["posthoc"]))
+                  if posthoc is not None else T["no_posthoc"])
 
-    template = (PAPER / "template.md").read_text()
+    template = (PAPER / T["template"]).read_text()
     out = (template
            .replace("{{TABLE_INVENTORY}}", tbl_inv)
            .replace("{{TABLE_PERFORMANCE}}", tbl_perf)
@@ -183,13 +236,12 @@ def main():
         out = out.replace(src, dst)
     yaml_fm = (
         "---\n"
-        'title: "Stability-Penalized Split Selection for Decision Tree '
-        'Classification: Sebuah Evaluasi Multi-Dataset yang Reproducible"\n'
+        f'title: "{T["title"]}"\n'
         'author: "Rofiq Fauzi (p36202600047@mhs.dinus.ac.id), Magister '
         'Artificial Intelligence, Universitas Dian Nuswantoro"\n'
         "---\n\n")
-    (PAPER / "draft.md").write_text(yaml_fm + out)
-    print("paper written to", PAPER / "draft.md")
+    (PAPER / T["out"]).write_text(yaml_fm + out)
+    print("paper written to", PAPER / T["out"])
 
 
 if __name__ == "__main__":

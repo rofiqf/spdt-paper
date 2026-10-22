@@ -1,0 +1,683 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+\documentclass[
+  conference]{IEEEtran}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{longtable,booktabs,array}
+\usepackage{caption}
+\captionsetup[table]{skip=6pt}
+\newcounter{none} % for unnumbered tables
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
+  \fi
+  % set entry spacing
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{times}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+% fallback for those not using the hyperref driver hyperxmp:
+\makeatletter
+\@ifundefined{xmpquote}{\newcommand{\xmpquote}[1]{#1}}{}
+\makeatother
+\hypersetup{
+  pdftitle={Stability-Penalized Split Selection for Decision Tree Classification: A Reproducible Multi-Dataset Evaluation},
+  pdfauthor={Rofiq Fauzi (p36202600047@mhs.dinus.ac.id), Magister Artificial Intelligence, Universitas Dian Nuswantoro},
+  colorlinks=true,
+  linkcolor={black},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={black},
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Stability-Penalized Split Selection for Decision Tree
+Classification: A Reproducible Multi-Dataset Evaluation}
+\author{Rofiq Fauzi (p36202600047@mhs.dinus.ac.id), Magister Artificial
+Intelligence, Universitas Dian Nuswantoro}
+\date{}
+
+\begin{document}
+\maketitle
+
+\textbf{Keywords}--decision trees; split criterion; bootstrap stability;
+gain variance; nested cross-validation; nonparametric statistical
+comparison.
+
+\subsection{Abstract}\label{abstract}
+
+The CART decision tree is fast and interpretable, but its structure is
+unstable: small changes in the training data can alter the selected
+split and, ultimately, the predictions. This study evaluates a very
+simple candidate formulation, named \emph{Stability-Penalized Decision
+Tree} (SPDT), in which each candidate split is scored as Gini gain minus
+a weighted penalty on the variance of that gain over bootstrap resamples
+of the node data:
+\texttt{Score(s)\ =\ Gain(s,D)\ -\ lambda*Var\_b{[}Gain(s,D\^{}(b)){]}}.
+A literature search up to 22 October 2026 found no formula-level
+equivalent of this criterion, but the tree-stability research space is
+crowded; the formulation is therefore positioned as a candidate, not as
+a novelty claim. The evaluation uses 8 UCI tabular classification
+datasets with repeated nested cross-validation (5 folds x 3 repeats on
+three seeds), hyperparameter tuning in the inner loop, and Macro-F1 as
+the primary metric. Results: SPDT versus custom CART (lambda=0) records
+6 wins, 0 ties, and 2 losses with a mean Macro-F1 difference of +0.0058.
+The Friedman test gives chi\^{}2(2)=4.0000, p=0.1353, Kendall's W=0.2500
+-- insufficient evidence to reject the null hypothesis, so confirmatory
+post-hoc comparisons were not run. Ablations show that the penalty
+strength lambda and the number of resamples B barely affect Macro-F1,
+tree-depth constraints matter far more, and the prediction-stability
+measure of SPDT is slightly worse than that of custom CART at roughly
+40x the fitting time. These findings are an honest null result: across
+the eight small-to-medium datasets tested, the bootstrap gain-variance
+penalty provides no benefit sufficient to outweigh the simplicity of
+CART, without ruling out benefits in other data regimes.
+
+\subsection{I. Introduction}\label{i.-introduction}
+
+Decision trees are nonparametric classifiers that recursively partition
+the feature space. The CART split criterion selects the candidate
+(feature, threshold) that maximizes the reduction of Gini impurity
+(Breiman et al. 1984; Quinlan 1986). However, tree structure is known to
+be unstable: small perturbations of the training data can change the
+selected split (Li and Clarke 2002), and consequently the predictions --
+the very phenomenon behind \emph{bagging} and \emph{random forests}
+(Breiman 1996, 2001; Dietterich 2000).
+
+Various approaches have reduced this instability at different levels:
+significance filtering, structural restriction, ensemble aggregation, or
+stable model selection (Briand et al. 2009; Lee et al. 2024; Mirzamomen
+and Kangavari 2017; Wang et al. 2017). What is rarely tested directly is
+the narrower question:
+
+\begin{quote}
+\textbf{Can a bootstrap variance penalty on the split gain, subtracted
+directly from the split score, improve out-of-sample Macro-F1 and/or
+prediction stability compared with standard CART under repeated
+resampling, at acceptable runtime cost?}
+\end{quote}
+
+Null hypothesis: no systematic improvement over the baseline across
+independent datasets. No hypothesis is made that SPDT \emph{must} win.
+
+The claimed contributions are limited to: (i) an explicit candidate
+formulation; (ii) a reproducible implementation and audit; (iii) a
+leakage-free nested-CV evaluation; (iv) honest ablation and statistical
+analysis of both positive and negative outcomes.
+
+\subsection{II. Related Work}\label{ii.-related-work}
+
+\textbf{Decision tree stability.} Structural tree instability was
+formalized by Li and Clarke (Li and Clarke 2002); quantitative stability
+and tree-similarity measures were developed, among others, by Turney
+(Turney 1995) and Briand et al. (Briand et al. 2009), who also evaluated
+bootstrap-based node-level stabilization (the NLS/Dannegger lineage).
+Lee et al. (Lee et al. 2024) proposed ANLS, which runs bootstrap
+iterations at each node and selects the most frequently chosen predictor
+-- the closest resampling-per-node mechanism to this study, but its
+aggregation is frequency voting rather than a gain-variance penalty.
+Mirzamomen and Kangavari (Mirzamomen and Kangavari 2017) stabilize trees
+through multi-attribute split tests.
+
+\textbf{Alternative split criteria.} Two-term Tsallis entropy criteria
+(Wang et al. 2017), label-noise-robust criteria (Yang et al. 2019),
+bias-corrected Gini split selection (Strobl et al. 2007), and
+Hoeffding-bound data-stream trees (Domingos and Hulten 2000) show that
+the ``modify the split score'' research space is active. Delise (Delise
+2026) scores split consistency across environments in boosting.
+Penalizing a resampled score by its variance is also known outside trees
+(the mean-variance pattern in model selection). None of the works we
+were able to verify contains the formula
+\texttt{Gain\ -\ lambda*Var\_bootstrap{[}Gain{]}}; nevertheless, a
+negative search result is not proof of novelty, and the formulation
+remains a candidate.
+
+\subsection{III. Method}\label{iii.-method}
+
+\subsubsection{A. Proposed split
+criterion}\label{a.-proposed-split-criterion}
+
+For a node with dataset D (training portion only), with
+\texttt{Gini(D)\ =\ 1\ -\ Sum\_c\ p(c\textbar{}D)\^{}2} and split gain
+
+\texttt{Gain(s,D)\ =\ Gini(D)\ -\ (\textbar{}D\_L\textbar{}/\textbar{}D\textbar{})*Gini(D\_L)\ -\ (\textbar{}D\_R\textbar{}/\textbar{}D\textbar{})*Gini(D\_R)},
+
+B bootstrap resamples \texttt{D\^{}(b)} are drawn from the node rows.
+For every valid candidate s:
+
+\texttt{V(s)\ =\ Var\_b{[}Gain(s,D\^{}(b)){]}} (sample variance, ddof=1)
+
+\textbf{Main score: \texttt{Score(s)\ =\ Gain(s,D)\ -\ lambda*V(s)}}.
+
+Deterministic policies: candidate thresholds are midpoints between
+sorted distinct adjacent values;
+\texttt{min\_samples\_leaf}/\texttt{min\_samples\_split} are applied to
+the original node counts; an empty child partition inside a resample
+contributes 0; leaves predict the majority class with smallest-label
+tie-breaking; bootstrap seeds derive from
+\texttt{(random\_state,\ node\ id)}. For lambda=0 the entire bootstrap
+computation is skipped and the estimator degenerates to the custom CART
+reference (verified identical to an independent reference implementation
+in unit tests). A separate exploratory variant (normalization by
+\texttt{V/(Gain\^{}2+eps)}) is documented but is not the main method. An
+important limitation: V(s) is scale-dependent on the gain.
+
+\subsubsection{B. Evaluation design}\label{b.-evaluation-design}
+
+Datasets: 8 UCI tabular classification datasets (Table I). Protocol:
+repeated stratified nested CV -- outer 5 folds x 3 repeats for each of
+the seeds {[}42, 123, 2026{]} (45 evaluations per dataset-method,
+identical splits for all methods); inner stratified 3-fold tuning with
+deterministically derived seeds. Preprocessing is median imputation
+fitted on the training portion only (pipeline). Primary metric Macro-F1;
+secondary: balanced accuracy, accuracy, fit/predict time, node count,
+tree depth. Prediction stability is measured separately as mean pairwise
+disagreement among models trained on 10 subsamples (90\%) of each outer
+training fold, evaluated on the same outer test fold -- reported
+separately from accuracy.
+
+\begin{longtable}[]{@{}lllll@{}}
+\caption{Dataset inventory.}\tabularnewline
+\toprule\noalign{}
+Dataset & N & Features & Classes & Source \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Dataset & N & Features & Classes & Source \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+banknote & 1372 & 4 & 2 & ucimlrepo \\
+glass & 214 & 9 & 6 & ucimlrepo \\
+ionosphere & 351 & 34 & 2 & ucimlrepo \\
+iris & 150 & 4 & 3 & ucimlrepo \\
+seeds & 210 & 7 & 3 & uci\_static\_zip \\
+sonar & 208 & 60 & 2 & ucimlrepo \\
+wdbc & 569 & 30 & 2 & ucimlrepo \\
+wine & 178 & 13 & 3 & ucimlrepo \\
+\end{longtable}
+
+\subsubsection{C. Statistical analysis}\label{c.-statistical-analysis}
+
+The unit of inference is the dataset (averaged over 45 outer folds), not
+the fold. The three primary methods (sklearn CART, custom CART lambda=0,
+SPDT) are compared with the Friedman test using datasets as blocks; only
+when the omnibus test provides grounds for it are paired Wilcoxon
+signed-rank tests with Holm correction and rank-biserial effect sizes
+run. p \textgreater= 0.05 is never interpreted as evidence of
+equivalence. Random forest is included as a non-equivalent contextual
+benchmark and is not part of the primary omnibus test.
+
+\subsection{IV. Results and
+Discussion}\label{iv.-results-and-discussion}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}@{}}
+\caption{Macro-F1 mean +/- sd (descriptive, fold-level) per dataset and
+method.}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Dataset
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+cart\_sklearn
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+cart\_custom
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+spdt
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+random\_forest
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Delta (spdt-cart\_custom)
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Dataset
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+cart\_sklearn
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+cart\_custom
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+spdt
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+random\_forest
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Delta (spdt-cart\_custom)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+banknote & 0.982 +/- 0.008 & 0.981 +/- 0.007 & 0.981 +/- 0.007 & 0.994
++/- 0.004 & +0.0004 \\
+glass & 0.620 +/- 0.097 & 0.609 +/- 0.093 & 0.626 +/- 0.093 & 0.742 +/-
+0.075 & +0.0166 \\
+ionosphere & 0.873 +/- 0.034 & 0.881 +/- 0.038 & 0.879 +/- 0.038 & 0.929
++/- 0.037 & -0.0027 \\
+iris & 0.949 +/- 0.033 & 0.945 +/- 0.038 & 0.944 +/- 0.037 & 0.955 +/-
+0.034 & -0.0008 \\
+seeds & 0.897 +/- 0.032 & 0.906 +/- 0.036 & 0.913 +/- 0.034 & 0.923 +/-
+0.038 & +0.0066 \\
+sonar & 0.719 +/- 0.065 & 0.706 +/- 0.073 & 0.725 +/- 0.061 & 0.833 +/-
+0.065 & +0.0189 \\
+wdbc & 0.925 +/- 0.031 & 0.925 +/- 0.030 & 0.928 +/- 0.030 & 0.956 +/-
+0.023 & +0.0037 \\
+wine & 0.905 +/- 0.047 & 0.905 +/- 0.044 & 0.909 +/- 0.046 & 0.981 +/-
+0.024 & +0.0040 \\
+\end{longtable}
+
+\begin{longtable}[]{@{}ll@{}}
+\caption{Mean Macro-F1 rank.}\tabularnewline
+\toprule\noalign{}
+Method & Mean rank \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Method & Mean rank \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+spdt & 1.5000 \\
+cart\_sklearn & 2.0000 \\
+cart\_custom & 2.5000 \\
+\end{longtable}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}@{}}
+\caption{Dataset-level statistical tests.}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Test
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Statistic
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+df
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+p
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\#datasets
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Kendall W
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Decision
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Test
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Statistic
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+df
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+p
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\#datasets
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Kendall W
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Decision
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+friedman & 4.0000 & 2 & 0.1353 & 8 & 0.2500 & no omnibus evidence;
+post-hoc not run \\
+\end{longtable}
+
+\emph{Post-hoc not run: the Friedman omnibus test gave no grounds (p
+\textgreater= 0.05), per protocol.}
+
+Table: Pairwise (post-hoc) comparisons.
+
+Paired summary SPDT vs custom CART: \textbf{6 wins / 0 ties / 2 losses},
+mean Macro-F1 difference +0.0058.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}@{}}
+\caption{Computational cost.}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Method
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Fit mean (s)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Fit median (s)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Predict mean (s)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Mean nodes
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Mean depth
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Method
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Fit mean (s)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Fit median (s)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Predict mean (s)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Mean nodes
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Mean depth
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+cart\_custom & 0.5340 & 0.4163 & 0.0009 & 26.6722 & 5.1000 \\
+cart\_sklearn & 0.2693 & 0.2605 & 0.0010 & 27.4222 & 5.2917 \\
+random\_forest & 1.1169 & 1.0863 & 0.0573 & nan & nan \\
+spdt & 21.4302 & 14.6491 & 0.0010 & 28.5944 & 5.4611 \\
+\end{longtable}
+
+\begin{longtable}[]{@{}lll@{}}
+\caption{Prediction stability (disagreement; not an accuracy
+metric).}\tabularnewline
+\toprule\noalign{}
+Method & Mean disagreement & SD \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Method & Mean disagreement & SD \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+cart\_custom & 0.0928 & 0.0853 \\
+cart\_sklearn & 0.0983 & 0.0885 \\
+random\_forest & 0.0271 & 0.0337 \\
+spdt & 0.1014 & 0.0934 \\
+\end{longtable}
+
+\begin{longtable}[]{@{}lllll@{}}
+\caption{Ablation on identical splits.}\tabularnewline
+\toprule\noalign{}
+Variant & Mean macro F1 & SD & Fit mean (s) & Mean nodes \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Variant & Mean macro F1 & SD & Fit mean (s) & Mean nodes \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+A0\_lam0 & 0.8599 & 0.1270 & 0.0201 & 37.6611 \\
+A1\_lam0.1\_B10 & 0.8598 & 0.1256 & 0.0860 & 37.6111 \\
+A1\_lam1\_B10 & 0.8601 & 0.1255 & 0.0862 & 37.5278 \\
+A2\_B20 & 0.8601 & 0.1251 & 0.1136 & 37.4556 \\
+A2\_B5 & 0.8613 & 0.1243 & 0.0711 & 37.4667 \\
+A3\_d3\_leaf1 & 0.8357 & 0.1592 & 0.0371 & 12.8722 \\
+A3\_d3\_leaf5 & 0.8353 & 0.1546 & 0.0373 & 11.8611 \\
+A3\_d8\_leaf1 & 0.8592 & 0.1272 & 0.0821 & 35.2500 \\
+A3\_d8\_leaf5 & 0.8521 & 0.1381 & 0.0820 & 24.7389 \\
+\end{longtable}
+
+\begin{longtable}[]{@{}llll@{}}
+\caption{SPDT hyperparameter selection frequency (45 outer folds per
+dataset).}\tabularnewline
+\toprule\noalign{}
+parameter & value & frequency & share \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+parameter & value & frequency & share \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+max\_depth & 5.0000 & 140 & 0.3889 \\
+max\_depth & 8.0000 & 102 & 0.2833 \\
+max\_depth & 3.0000 & 92 & 0.2556 \\
+min\_samples\_leaf & 1.0000 & 201 & 0.5583 \\
+min\_samples\_leaf & 2.0000 & 97 & 0.2694 \\
+min\_samples\_leaf & 5.0000 & 62 & 0.1722 \\
+min\_samples\_split & 2.0000 & 252 & 0.7000 \\
+min\_samples\_split & 5.0000 & 69 & 0.1917 \\
+min\_samples\_split & 10.0000 & 39 & 0.1083 \\
+n\_bootstrap & 5.0000 & 191 & 0.5306 \\
+n\_bootstrap & 20.0000 & 87 & 0.2417 \\
+n\_bootstrap & 10.0000 & 82 & 0.2278 \\
+penalty\_lambda & 10.0000 & 233 & 0.6472 \\
+penalty\_lambda & 0.0000 & 61 & 0.1694 \\
+penalty\_lambda & 0.0100 & 41 & 0.1139 \\
+penalty\_lambda & 1.0000 & 22 & 0.0611 \\
+penalty\_lambda & 0.1000 & 3 & 0.0083 \\
+\end{longtable}
+
+\textbf{Discussion.} The results descriptively favor SPDT but do not
+reach confirmatory evidence. SPDT achieves the best mean rank (1.500 vs
+2.000 for sklearn CART and 2.500 for custom CART) and wins on 6 of 8
+datasets paired against custom CART, yet the Friedman test finds
+insufficient evidence of a difference (p = 0.1353), and the exploratory
+SPDT-custom CART comparison gives a raw p of 0.078 -- it does not
+survive the 5\% level and must not be read as significant. With only 8
+datasets, statistical power is limited; per protocol, the results are
+reported as they stand and p \textgreater= 0.05 is not interpreted as
+equivalence.
+
+A second important finding: the stability penalty does not reduce
+prediction disagreement -- SPDT is in fact slightly higher (0.101) than
+custom CART (0.093) and sklearn CART (0.098). Random forest remains the
+most stable (0.027) through ensemble aggregation. The motivating promise
+of the method (better prediction stability) therefore does not
+materialize on this benchmark; a gain-variance penalty is no substitute
+for ensembling.
+
+A third finding from the identical-split ablations: neither the penalty
+strength lambda nor the number of resamples B materially changes
+Macro-F1 (all lambda and B variants fall in the 0.859-0.861 range),
+whereas depth/leaf constraints matter far more (depth 3 drops to about
+0.836). Inner tuning tends to select large lambda (10 in 64.7\% of
+folds) and a small B (5 in 53.1\%), indicating the penalty is often
+selected but has a small effect on accuracy. The cost is real: SPDT
+fitting time is roughly 40x that of custom CART. Overall, the
+effectiveness of the bootstrap gain-variance penalty is
+dataset-dependent and small in magnitude; simple impurity-based
+splitting remains preferable for these small-to-medium datasets.
+
+\subsection{V. Conclusion}\label{v.-conclusion}
+
+This study evaluated the SPDT candidate formulation reproducibly, with
+leakage-free repeated nested CV, controlled ablation on identical
+splits, and dataset-level statistical analysis on 8 UCI datasets.
+Descriptively, SPDT achieved the best mean rank and won 6 of 8 paired
+comparisons against custom CART, but the Friedman test provided
+insufficient evidence of a difference (chi\^{}2(2)=4.0000, p=0.1353), so
+there is no confirmatory basis for claiming improvement. Moreover, the
+prediction-stability measure did not improve and was slightly worse,
+while compute cost rose roughly 40x. Under the tested conditions, the
+simplicity of CART remains preferable. Limitations: eight small
+datasets, Gini impurity only, a single disagreement-based stability
+proxy, a formula-level novelty claim that is not established, and the
+absence of the closest literature criteria (ANLS, minimax split) as
+comparators. The most valuable future work: direct comparison with
+node-level bootstrap stabilization from the literature, a theoretically
+grounded penalty normalization by gain scale, and evaluation on larger
+benchmarks.
+
+\subsection{References}\label{references}
+
+\protect\phantomsection\label{refs}
+\begin{CSLReferences}{1}{1}
+\bibitem[\citeproctext]{ref-breiman1996bagging}
+Breiman, Leo. 1996. {``Bagging Predictors.''} \emph{Machine Learning} 24
+(2): 123--40. \url{https://doi.org/10.1023/A:1018054314350}.
+
+\bibitem[\citeproctext]{ref-breiman2001randomforests}
+Breiman, Leo. 2001. {``Random Forests.''} \emph{Machine Learning} 45
+(1): 5--32. \url{https://doi.org/10.1023/A:1010933404324}.
+
+\bibitem[\citeproctext]{ref-breiman1984cart}
+Breiman, Leo, Jerome H. Friedman, Richard A. Olshen, and Charles J.
+Stone. 1984. \emph{Classification and Regression Trees}. Wadsworth;
+expanded edition Chapman \& Hall/CRC, 1993.
+
+\bibitem[\citeproctext]{ref-briand2009stability}
+Briand, Bénédicte, Gilles R. Ducharme, Vanessa Parache, and Catherine
+Mercat-Rommens. 2009. {``A Similarity Measure to Assess the Stability of
+Classification Trees.''} \emph{Computational Statistics \& Data
+Analysis} 53 (4): 1208--17.
+\url{https://doi.org/10.1016/j.csda.2008.10.033}.
+
+\bibitem[\citeproctext]{ref-delise2026era}
+Delise, Timothy. 2026. {``Era Splitting -- Invariant Learning for
+Decision Trees.''} \emph{Expert Systems with Applications} 299: 129687.
+\url{https://doi.org/10.1016/j.eswa.2025.129687}.
+
+\bibitem[\citeproctext]{ref-dietterich2000ensemble}
+Dietterich, Thomas G. 2000. {``An Experimental Comparison of Three
+Methods for Constructing Ensembles of Decision Trees: Bagging, Boosting,
+and Randomization.''} \emph{Machine Learning} 40 (2): 139--57.
+\url{https://doi.org/10.1023/A:1007607513941}.
+
+\bibitem[\citeproctext]{ref-domingos2000vfdt}
+Domingos, Pedro, and Geoff Hulten. 2000. {``Mining High-Speed Data
+Streams.''} \emph{Proceedings of the Sixth ACM SIGKDD International
+Conference on Knowledge Discovery and Data Mining (KDD '00)}, 71--80.
+\url{https://doi.org/10.1145/347090.347107}.
+
+\bibitem[\citeproctext]{ref-lee2024anls}
+Lee, Joon, Min Kyu Sim, and Jin-Seon Hong. 2024. {``Assessing Decision
+Tree Stability: A Comprehensive Method for Generating a Stable Decision
+Tree.''} \emph{IEEE Access} 12: 90061--72.
+\url{https://doi.org/10.1109/ACCESS.2024.3419228}.
+
+\bibitem[\citeproctext]{ref-li2002instability}
+Li, Rong-Hua, and Stewart Clarke. 2002. {``Instability of Decision Tree
+Classification Algorithms.''} \emph{Proceedings of the Eighth ACM SIGKDD
+International Conference on Knowledge Discovery and Data Mining (KDD
+'02)}, 570--75. \url{https://doi.org/10.1145/775047.775131}.
+
+\bibitem[\citeproctext]{ref-mirzamomen2017stable}
+Mirzamomen, Zahra, and Mohammad Reza Kangavari. 2017. {``A Framework to
+Induce More Stable Decision Trees for Pattern Classification.''}
+\emph{Pattern Analysis and Applications} 20 (4): 991--1004.
+\url{https://doi.org/10.1007/s10044-016-0542-2}.
+
+\bibitem[\citeproctext]{ref-quinlan1986induction}
+Quinlan, J. Ross. 1986. {``Induction of Decision Trees.''} \emph{Machine
+Learning} 1 (1): 81--106. \url{https://doi.org/10.1023/A:1022643204877}.
+
+\bibitem[\citeproctext]{ref-strobl2007bias}
+Strobl, Carolin, Anne-Laure Boulesteix, and Thomas Augustin. 2007.
+{``Unbiased Split Selection for Classification Trees Based on the {G}ini
+Index.''} \emph{Computational Statistics \& Data Analysis} 52 (1):
+483--501. \url{https://doi.org/10.1016/j.csda.2006.12.030}.
+
+\bibitem[\citeproctext]{ref-turney1995stability}
+Turney, Peter D. 1995. {``Bias and the Quantification of Stability.''}
+\emph{Machine Learning} 20 (1): 23--33.
+\url{https://doi.org/10.1007/BF00993473}.
+
+\bibitem[\citeproctext]{ref-wang2017tsallis}
+Wang, Yisen, Shu-Tao Xia, and Jia Wu. 2017. {``A Less-Greedy Two-Term
+Tsallis Entropy Information Metric Approach for Decision Tree
+Classification.''} \emph{Knowledge-Based Systems} 120: 34--42.
+\url{https://doi.org/10.1016/j.knosys.2016.12.021}.
+
+\bibitem[\citeproctext]{ref-yang2019pairgain}
+Yang, Bo-Bo, Wei Gao, and Min Li. 2019. {``On the Robust Splitting
+Criterion of Random Forest.''} \emph{2019 IEEE 19th International
+Conference on Data Mining (ICDM)}, 1420--25.
+\url{https://doi.org/10.1109/ICDM.2019.00184}.
+
+\end{CSLReferences}
+
+\end{document}
