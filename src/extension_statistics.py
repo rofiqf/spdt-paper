@@ -126,6 +126,24 @@ def summarize_extension(a: pd.DataFrame, b: pd.DataFrame,
                              "effect": rank_biserial(d), "ci_low": lo,
                              "ci_high": hi, "n_datasets": len(d),
                              "decision": "exploratory"})
+    # B: Holm across noise levels for the per-level Friedman family
+    lvl_rows = [r for r in rows if r["analysis"] == "B_friedman_per_level"]
+    if len(lvl_rows) >= 2:
+        rej, holm, _, _ = multipletests([r["p"] for r in lvl_rows],
+                                        alpha=0.05, method="holm")
+        for r, hp, rj in zip(lvl_rows, holm, rej):
+            r["holm_p"] = hp
+            r["decision"] = ("omnibus_significant_holm" if rj
+                             else "no_omnibus_evidence")
+            rows.append({"analysis": "B_friedman_per_level_holm",
+                         "subset": r["subset"] + " (family-corrected)",
+                         "statistic": r["statistic"], "df": r["df"],
+                         "p": r["p"], "holm_p": hp,
+                         "effect": r["effect"], "ci_low": np.nan,
+                         "ci_high": np.nan,
+                         "n_datasets": r["n_datasets"],
+                         "decision": ("significant_after_holm" if rj
+                                      else "not_significant_after_holm")})
     # degradation slopes (descriptive)
     base = b[b.noise_level == 0.0]
     if len(base):

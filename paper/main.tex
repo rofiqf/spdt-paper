@@ -212,7 +212,7 @@ artifacts are preserved unchanged.
 Table~\ref{tab:extperf} reports per-dataset Macro-F1 for six methods.
 The normalized variant does not improve over custom CART (3 wins, 5
 losses, mean difference $-0.0001$) and is slightly below the original
-SPDT (2 wins, 6 losses, $-0.0029$). ANLS is descriptively the best
+SPDT (2 wins, 6 losses, $-0.0028$). ANLS is descriptively the best
 single tree (5 wins, 3 losses, $+0.0066$), comparable in magnitude to
 the original SPDT's baseline gain. The Friedman omnibus over the four
 primary methods is not significant ($\chi^2(3)=3.75$, $p=0.290$), so
@@ -227,10 +227,14 @@ among single trees: median paired differences against custom CART are
 $+0.0063$ (5\%), $+0.0136$ (10\%, CI $[0.0015,0.0186]$), $+0.0217$
 (20\%, CI $[0.0132,0.0333]$), and $+0.0121$ (30\%, CI $[-0.0051,0.0280]$).
 Per-level Friedman tests are significant at 10\% ($p=0.024$) and 20\%
-($p=0.003$). These noise analyses are exploratory: they were not the
-primary confirmatory path, multiple levels were examined, and the
-high-noise interval includes zero. We therefore report a promising but
-unconfirmed robustness signal, not a robustness claim.
+($p=0.003$) before family correction; after Holm correction across the
+five-level family only the 20\% level remains significant
+($p_{\mathrm{Holm}}=0.017$). These noise analyses remain exploratory:
+they were not the primary confirmatory path, and the high-noise
+interval includes zero. We therefore report a promising but unconfirmed
+robustness signal concentrated at the 20\% level, not a general
+robustness claim; a single pre-registered confirmatory level is left to
+future work.
 
 \begin{figure*}[!t]
 \centering
@@ -284,14 +288,23 @@ averages $2.2$ s, and a single-process memory probe measured $2.3$ MB
 peak for a penalized fit. These figures exclude the staged tuning
 overhead (S1--S3, tens of inner-CV fits per outer fold), which is the
 dominant cost of the penalized methods and must be budgeted in
-practice. Gains of the size observed do not justify this overhead for
+practice. Extension timings report refits of tuned configurations,
+whereas the baseline study reported full inner-grid search times; the
+two bases differ and cross-version timing comparisons are not
+controlled. Gains of the size observed do not justify this overhead for
 clean-data deployment; the judgment is closer under label noise, where
 the exploratory signal appeared.
 
 \section{Discussion}
 \textbf{RQ1:} the normalized penalty does not improve clean-data
 Macro-F1; it performs at or slightly below CART and the original SPDT,
-and the omnibus test finds no differences ($p=0.290$).
+and the omnibus test finds no differences ($p=0.290$). A depth-matched
+control (custom CART restricted to the tuned depth, identical splits)
+shows that this is not purely a depth effect: the control averages
+$0.0021$ \emph{below} the original SPDT and is statistically
+indistinguishable from the normalized variant ($+0.0007$), so the
+original penalty carries a small effect beyond complexity restriction
+while the normalized one does not.
 \textbf{RQ2:} under 10--20\% training label noise the normalized
 variant degrades least among single trees, with paired confidence
 intervals excluding zero; this exploratory signal requires independent
@@ -314,7 +327,9 @@ Eight small datasets limit statistical power; Gini impurity only;
 numeric features only; a single disagreement-based stability proxy;
 noise injected independently of features (real label noise is often
 not uniform); frozen clean-label tuning under noise is one of several
-defensible protocols; ANLS uses a capped iteration budget; the closest
+defensible protocols; ANLS uses a capped iteration budget and no
+official code release exists to cross-validate our re-implementation;
+the closest
 alternative criteria (minimax split, conditional inference trees) were
 analyzed but not benchmarked; and the novelty of both penalty
 formulations remains unverified at the formula level.

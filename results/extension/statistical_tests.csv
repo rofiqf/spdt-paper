@@ -1,28 +1,33 @@
 analysis,subset,statistic,df,p,holm_p,effect,ci_low,ci_high,n_datasets,decision
 A_omnibus_friedman,clean,3.75,3.0,0.28975578119338535,,0.15625,,,8,no_omnibus_evidence
-A_paired_descriptive,norm_vs_cart_custom,-0.002453321662950203,,,,0.16666666666666666,-0.0026599507468390293,0.0028974710226536493,8,exploratory
+A_paired_descriptive,norm_vs_cart_custom,-0.0024533216629501475,,,,0.16666666666666666,-0.0026599507468390293,0.002897471022653663,8,exploratory
 A_paired_descriptive,norm_vs_spdt,-0.002555423336357998,,,,-0.6111111111111112,-0.006134889440124414,0.00021993326292209486,8,exploratory
-B_friedman_per_level,noise=0.0,3.75,3.0,0.28975578119338535,,0.15625,,,8,no_omnibus_evidence
-B_paired_descriptive,noise=0.0 norm_vs_cart_custom,-0.002453321662950203,,,,0.16666666666666666,-0.0026599507468390293,0.0028974710226536493,8,exploratory
+B_friedman_per_level,noise=0.0,3.75,3.0,0.28975578119338535,0.5122308076840574,0.15625,,,8,no_omnibus_evidence
+B_paired_descriptive,noise=0.0 norm_vs_cart_custom,-0.0024533216629501475,,,,0.16666666666666666,-0.0026599507468390293,0.002897471022653663,8,exploratory
 B_paired_descriptive,noise=0.0 norm_vs_spdt,-0.002555423336357998,,,,-0.6111111111111112,-0.006134889440124414,0.00021993326292209486,8,exploratory
-B_friedman_per_level,noise=0.05,6.449999999999989,3.0,0.09165537466946727,,0.26874999999999954,,,8,no_omnibus_evidence
+B_friedman_per_level,noise=0.05,6.449999999999989,3.0,0.09165537466946727,0.2749661240084018,0.26874999999999954,,,8,no_omnibus_evidence
 B_paired_descriptive,noise=0.05 norm_vs_cart_custom,0.006259613165431888,,,,0.6111111111111112,-9.518400347083289e-05,0.009302192255653804,8,exploratory
 B_paired_descriptive,noise=0.05 norm_vs_spdt,0.00830916681579652,,,,0.8888888888888888,0.0032889286749817753,0.010058647572642548,8,exploratory
-B_friedman_per_level,noise=0.1,9.449999999999989,3.0,0.02386926888237002,,0.39374999999999954,,,8,omnibus_significant
-B_paired_descriptive,noise=0.1 norm_vs_cart_custom,0.01364411106090857,,,,0.7222222222222222,0.0015374535792838234,0.0185954291346124,8,exploratory
+B_friedman_per_level,noise=0.1,9.449999999999989,3.0,0.02386926888237002,0.09547707552948008,0.39374999999999954,,,8,no_omnibus_evidence
+B_paired_descriptive,noise=0.1 norm_vs_cart_custom,0.01364411106090857,,,,0.7222222222222222,0.0015374535792838512,0.01859542913461243,8,exploratory
 B_paired_descriptive,noise=0.1 norm_vs_spdt,0.013529226636013691,,,,0.6666666666666666,-0.0011011047258556817,0.01656125723669649,8,exploratory
-B_friedman_per_level,noise=0.2,13.650000000000006,3.0,0.0034224272742474464,,0.5687500000000002,,,8,omnibus_significant
+B_friedman_per_level,noise=0.2,13.650000000000006,3.0,0.0034224272742474464,0.017112136371237232,0.5687500000000002,,,8,omnibus_significant_holm
 B_paired_descriptive,noise=0.2 norm_vs_cart_custom,0.02173521565021308,,,,1.0,0.01323861366231711,0.033291064600819154,8,exploratory
 B_paired_descriptive,noise=0.2 norm_vs_spdt,0.019180416230985597,,,,1.0,0.010678020614761793,0.031029143129059793,8,exploratory
-B_friedman_per_level,noise=0.3,4.049999999999997,3.0,0.2561154038420287,,0.16874999999999987,,,8,no_omnibus_evidence
-B_paired_descriptive,noise=0.3 norm_vs_cart_custom,0.012082173127731244,,,,0.4444444444444444,-0.005143383032235514,0.028022596612906965,8,exploratory
-B_paired_descriptive,noise=0.3 norm_vs_spdt,0.011488450862014443,,,,0.4444444444444444,-0.004942000463162452,0.026180395325904774,8,exploratory
+B_friedman_per_level,noise=0.3,4.049999999999997,3.0,0.2561154038420287,0.5122308076840574,0.16874999999999987,,,8,no_omnibus_evidence
+B_paired_descriptive,noise=0.3 norm_vs_cart_custom,0.012082173127731244,,,,0.4444444444444444,-0.005143383032235521,0.028022596612906965,8,exploratory
+B_paired_descriptive,noise=0.3 norm_vs_spdt,0.011488450862014443,,,,0.4444444444444444,-0.004942000463162467,0.026180395325904774,8,exploratory
+B_friedman_per_level_holm,noise=0.0 (family-corrected),3.75,3.0,0.28975578119338535,0.5122308076840574,0.15625,,,8,not_significant_after_holm
+B_friedman_per_level_holm,noise=0.05 (family-corrected),6.449999999999989,3.0,0.09165537466946727,0.2749661240084018,0.26874999999999954,,,8,not_significant_after_holm
+B_friedman_per_level_holm,noise=0.1 (family-corrected),9.449999999999989,3.0,0.02386926888237002,0.09547707552948008,0.39374999999999954,,,8,not_significant_after_holm
+B_friedman_per_level_holm,noise=0.2 (family-corrected),13.650000000000006,3.0,0.0034224272742474464,0.017112136371237232,0.5687500000000002,,,8,significant_after_holm
+B_friedman_per_level_holm,noise=0.3 (family-corrected),4.049999999999997,3.0,0.2561154038420287,0.5122308076840574,0.16874999999999987,,,8,not_significant_after_holm
 B_degradation,noise=0.05 cart_sklearn,-0.019180340740549973,,,,-1.0,,,8,exploratory
-B_degradation,noise=0.05 cart_custom,-0.016601225627541627,,,,-1.0,,,8,exploratory
+B_degradation,noise=0.05 cart_custom,-0.01660122562754157,,,,-1.0,,,8,exploratory
 B_degradation,noise=0.05 spdt,-0.021289762247409416,,,,-1.0,,,8,exploratory
 B_degradation,noise=0.05 spdt_norm,-0.012782057467021712,,,,-1.0,,,8,exploratory
 B_degradation,noise=0.1 cart_sklearn,-0.0420386791889128,,,,-1.0,,,8,exploratory
-B_degradation,noise=0.1 cart_custom,-0.043347846709622107,,,,-1.0,,,8,exploratory
+B_degradation,noise=0.1 cart_custom,-0.04334784670962222,,,,-1.0,,,8,exploratory
 B_degradation,noise=0.1 spdt,-0.03995500990278561,,,,-1.0,,,8,exploratory
 B_degradation,noise=0.1 spdt_norm,-0.025547649741524403,,,,-1.0,,,8,exploratory
 B_degradation,noise=0.2 cart_sklearn,-0.08786330868373443,,,,-1.0,,,8,exploratory
@@ -33,5 +38,5 @@ B_degradation,noise=0.3 cart_sklearn,-0.14145330692235797,,,,-1.0,,,8,explorator
 B_degradation,noise=0.3 cart_custom,-0.14449530481251172,,,,-1.0,,,8,exploratory
 B_degradation,noise=0.3 spdt,-0.14459574675164594,,,,-1.0,,,8,exploratory
 B_degradation,noise=0.3 spdt_norm,-0.13056477103072806,,,,-1.0,,,8,exploratory
-C_vs_legacy,cart_custom,0.09255672956695263,,,,-0.00024327043304736562,,,8,legacy_ref=0.0928
-C_vs_legacy,spdt,0.09565796046210345,,,,-0.005742039537896551,,,8,legacy_ref=0.1014
+C_vs_legacy,cart_custom,0.09255672956695259,,,,-0.00024327043304740725,,,8,legacy_ref=0.0928
+C_vs_legacy,spdt,0.09565796046210341,,,,-0.005742039537896593,,,8,legacy_ref=0.1014
