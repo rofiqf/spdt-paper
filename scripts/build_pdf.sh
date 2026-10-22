@@ -25,18 +25,15 @@ lines = open(os.environ["RAW_TEX"]).read().splitlines()
 out = []
 state = "normal"
 spec = ""
-caption_pending = None
+caption = None
+body = []
 i = 0
 SKIP_TOK = (r"\endhead", r"\endfirsthead", r"\endfoot", r"\endlastfoot")
-
-
-def braces_balanced(s):
-    return s.count("{") == s.count("}")
+NARROW_MAX = 58  # karakter -> satu kolom; lebih lebar -> dua kolom
 
 
 def extract_spec(lines, i):
-    """Ambil spesifikasi kolom longtable (brace-aware, multi-baris).
-    Return (spec, i_baris_terakhir)."""
+    """Ambil spesifikasi kolom longtable (brace-aware, multi-baris)."""
     s = lines[i]
     start = s.index("[]{") + 3
     buf = s[start:]
@@ -55,13 +52,38 @@ def extract_spec(lines, i):
         buf += lines[i]
 
 
+def clean_caption(lines, i):
+    cap = lines[i]
+    while not cap.rstrip().endswith((r"\\", r"\tabularnewline")) \
+            and i + 1 < len(lines):
+        i += 1
+        cap += " " + lines[i].strip()
+    cap = re.sub(r"\\tabularnewline\s*$", "", cap.strip())
+    cap = re.sub(r"\\\\\s*$", "", cap)
+    return cap.strip(), i
+
+
+def flush():
+    width = max((len(l) for l in body), default=0)
+    env = "table" if width <= NARROW_MAX else "table*"
+    spec_float = "[!tb]" if env == "table" else "[!t]"
+    out.append(r"\begin{%s}%s" % (env, spec_float))
+    out.append(r"\centering")
+    if caption:
+        out.append(caption)
+    out.append(r"\begin{tabular}{" + spec + "}")
+    out.extend(body)
+    out.append(r"\end{tabular}")
+    out.append(r"\end{%s}" % env)
+
+
 while i < len(lines):
     ln = lines[i]
     if state == "normal":
         if ln.startswith(r"\begin{longtable}"):
             spec, i = extract_spec(lines, i)
-            out.append(r"\begin{table*}[t]")
-            out.append(r"\centering")
+            caption = None
+            body = []
             state = "await_caption"
         else:
             out.append(ln)
@@ -69,51 +91,35 @@ while i < len(lines):
         if ln.startswith(SKIP_TOK) or ln.strip() == "":
             pass
         elif ln.startswith(r"\caption"):
-            cap = ln
-            while not cap.rstrip().endswith((r"\\", r"\tabularnewline")) \
-                    and i + 1 < len(lines):
-                i += 1
-                cap += " " + lines[i].strip()
-            cap = re.sub(r"\\tabularnewline\s*$", "", cap.strip())
-            cap = re.sub(r"\\\\\s*$", "", cap)
-            caption_pending = cap.strip()
-            state = "await_tabular"
+            caption, i = clean_caption(lines, i)
+            state = "await_body"
         else:
-            if caption_pending:
-                out.append(caption_pending)
-                caption_pending = None
-            out.append(r"\begin{tabular}{" + spec + "}")
-            state = "in_tabular"
-            continue  # proses ulang baris ini
-    elif state == "await_tabular":
+            state = "await_body"
+            continue
+    elif state == "await_body":
         if ln.startswith(SKIP_TOK) or ln.strip() == "":
             pass
         else:
-            if caption_pending:
-                out.append(caption_pending)
-                caption_pending = None
-            out.append(r"\begin{tabular}{" + spec + "}")
-            state = "in_tabular"
+            state = "in_body"
             continue
-    elif state == "in_tabular":
+    elif state == "in_body":
         if ln.startswith(r"\endfirsthead"):
             state = "skip_cont_header"
         elif ln.startswith((r"\endhead", r"\endfoot", r"\endlastfoot")):
             pass
         elif ln.startswith(r"\end{longtable}"):
-            out.append(r"\end{tabular}")
-            out.append(r"\end{table*}")
+            flush()
             state = "normal"
         else:
-            out.append(ln)
+            body.append(ln)
     elif state == "skip_cont_header":
         if ln.startswith(r"\endhead"):
-            state = "in_tabular"
+            state = "in_body"
     i += 1
 
 open(os.environ["OUT_TEX"], "w").write("\n".join(out) + "\n")
-print("tables converted:",
-      sum(1 for l in out if l.startswith(r"\begin{table*}")),
+print("tables:", sum(1 for l in out if re.match(r"\\begin\{table\*?\}", l)),
+      "| single-col:", sum(1 for l in out if l == r"\begin{table}[!tb]"),
       "| captions:", sum(1 for l in out if l.startswith(r"\caption")))
 EOF
 

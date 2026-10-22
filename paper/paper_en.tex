@@ -246,7 +246,7 @@ disagreement among models trained on 10 subsamples (90\%) of each outer
 training fold, evaluated on the same outer test fold -- reported
 separately from accuracy.
 
-\begin{table*}[t]
+\begin{table}[!tb]
 \centering
 \caption{Dataset inventory.}
 \begin{tabular}{@{}lllll@{}}
@@ -263,7 +263,7 @@ sonar & 208 & 60 & 2 & ucimlrepo \\
 wdbc & 569 & 30 & 2 & ucimlrepo \\
 wine & 178 & 13 & 3 & ucimlrepo \\
 \end{tabular}
-\end{table*}
+\end{table}
 
 \subsubsection{C. Statistical analysis}\label{c.-statistical-analysis}
 
@@ -279,7 +279,7 @@ benchmark and is not part of the primary omnibus test.
 \subsection{IV. Results and
 Discussion}\label{iv.-results-and-discussion}
 
-\begin{table*}[t]
+\begin{table*}[!t]
 \centering
 \caption{Macro-F1 mean +/- sd (descriptive, fold-level) per dataset and method.}
 \begin{tabular}{@{}  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}@{}}
@@ -287,15 +287,15 @@ Discussion}\label{iv.-results-and-discussion}
 \begin{minipage}[b]{\linewidth}\raggedright
 Dataset
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-cart\_sklearn
+CART-skl
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-cart\_custom
+CART-cust
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-spdt
+SPDT
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-random\_forest
+RF
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Delta (spdt-cart\_custom)
+SPDT-CART
 \end{minipage} \\
 \midrule\noalign{}
 \bottomrule\noalign{}
@@ -318,7 +318,7 @@ wine & 0.905 +/- 0.047 & 0.905 +/- 0.044 & 0.909 +/- 0.046 & 0.981 +/-
 \end{tabular}
 \end{table*}
 
-\begin{table*}[t]
+\begin{table}[!tb]
 \centering
 \caption{Mean Macro-F1 rank.}
 \begin{tabular}{@{}ll@{}}
@@ -326,13 +326,13 @@ wine & 0.905 +/- 0.047 & 0.905 +/- 0.044 & 0.909 +/- 0.046 & 0.981 +/-
 Method & Mean rank \\
 \midrule\noalign{}
 \bottomrule\noalign{}
-spdt & 1.5000 \\
-cart\_sklearn & 2.0000 \\
-cart\_custom & 2.5000 \\
+SPDT & 1.500 \\
+CART-skl & 2.000 \\
+CART-cust & 2.500 \\
 \end{tabular}
-\end{table*}
+\end{table}
 
-\begin{table*}[t]
+\begin{table*}[!t]
 \centering
 \caption{Dataset-level statistical tests.}
 \begin{tabular}{@{}  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1429}}@{}}
@@ -367,34 +367,22 @@ Table: Pairwise (post-hoc) comparisons.
 Paired summary SPDT vs custom CART: \textbf{6 wins / 0 ties / 2 losses},
 mean Macro-F1 difference +0.0058.
 
-\begin{table*}[t]
+\begin{table*}[!t]
 \centering
 \caption{Computational cost.}
-\begin{tabular}{@{}  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1667}}@{}}
+\begin{tabular}{@{}llllll@{}}
 \toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Method
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Fit mean (s)
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Fit median (s)
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Predict mean (s)
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Mean nodes
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Mean depth
-\end{minipage} \\
+Method & Fit (s) & Fit median (s) & Predict (s) & Nodes & Depth \\
 \midrule\noalign{}
 \bottomrule\noalign{}
-cart\_custom & 0.5340 & 0.4163 & 0.0009 & 26.6722 & 5.1000 \\
-cart\_sklearn & 0.2693 & 0.2605 & 0.0010 & 27.4222 & 5.2917 \\
-random\_forest & 1.1169 & 1.0863 & 0.0573 & nan & nan \\
-spdt & 21.4302 & 14.6491 & 0.0010 & 28.5944 & 5.4611 \\
+CART-cust & 0.5340 & 0.4163 & 0.0009 & 26.6722 & 5.1000 \\
+CART-skl & 0.2693 & 0.2605 & 0.0010 & 27.4222 & 5.2917 \\
+RF & 1.1169 & 1.0863 & 0.0573 & - & - \\
+SPDT & 21.4302 & 14.6491 & 0.0010 & 28.5944 & 5.4611 \\
 \end{tabular}
 \end{table*}
 
-\begin{table*}[t]
+\begin{table}[!tb]
 \centering
 \caption{Prediction stability (disagreement; not an accuracy metric).}
 \begin{tabular}{@{}lll@{}}
@@ -402,34 +390,34 @@ spdt & 21.4302 & 14.6491 & 0.0010 & 28.5944 & 5.4611 \\
 Method & Mean disagreement & SD \\
 \midrule\noalign{}
 \bottomrule\noalign{}
-cart\_custom & 0.0928 & 0.0853 \\
-cart\_sklearn & 0.0983 & 0.0885 \\
-random\_forest & 0.0271 & 0.0337 \\
-spdt & 0.1014 & 0.0934 \\
+CART-cust & 0.0928 & 0.0853 \\
+CART-skl & 0.0983 & 0.0885 \\
+RF & 0.0271 & 0.0337 \\
+SPDT & 0.1014 & 0.0934 \\
 \end{tabular}
-\end{table*}
+\end{table}
 
-\begin{table*}[t]
+\begin{table}[!tb]
 \centering
 \caption{Ablation on identical splits.}
 \begin{tabular}{@{}lllll@{}}
 \toprule\noalign{}
-Variant & Mean macro F1 & SD & Fit mean (s) & Mean nodes \\
+Variant & Macro F1 & SD & Fit (s) & Nodes \\
 \midrule\noalign{}
 \bottomrule\noalign{}
-A0\_lam0 & 0.8599 & 0.1270 & 0.0201 & 37.6611 \\
-A1\_lam0.1\_B10 & 0.8598 & 0.1256 & 0.0860 & 37.6111 \\
-A1\_lam1\_B10 & 0.8601 & 0.1255 & 0.0862 & 37.5278 \\
-A2\_B20 & 0.8601 & 0.1251 & 0.1136 & 37.4556 \\
-A2\_B5 & 0.8613 & 0.1243 & 0.0711 & 37.4667 \\
-A3\_d3\_leaf1 & 0.8357 & 0.1592 & 0.0371 & 12.8722 \\
-A3\_d3\_leaf5 & 0.8353 & 0.1546 & 0.0373 & 11.8611 \\
-A3\_d8\_leaf1 & 0.8592 & 0.1272 & 0.0821 & 35.2500 \\
-A3\_d8\_leaf5 & 0.8521 & 0.1381 & 0.0820 & 24.7389 \\
+A0 (lam=0) & 0.8599 & 0.1270 & 0.0201 & 37.6611 \\
+A1 (lam=.1) & 0.8598 & 0.1256 & 0.0860 & 37.6111 \\
+A1 (lam=1) & 0.8601 & 0.1255 & 0.0862 & 37.5278 \\
+A2 (B=20) & 0.8601 & 0.1251 & 0.1136 & 37.4556 \\
+A2 (B=5) & 0.8613 & 0.1243 & 0.0711 & 37.4667 \\
+A3 d3 l1 & 0.8357 & 0.1592 & 0.0371 & 12.8722 \\
+A3 d3 l5 & 0.8353 & 0.1546 & 0.0373 & 11.8611 \\
+A3 d8 l1 & 0.8592 & 0.1272 & 0.0821 & 35.2500 \\
+A3 d8 l5 & 0.8521 & 0.1381 & 0.0820 & 24.7389 \\
 \end{tabular}
-\end{table*}
+\end{table}
 
-\begin{table*}[t]
+\begin{table}[!tb]
 \centering
 \caption{SPDT hyperparameter selection frequency (45 outer folds per dataset).}
 \begin{tabular}{@{}llll@{}}
@@ -439,23 +427,16 @@ parameter & value & frequency & share \\
 \bottomrule\noalign{}
 max\_depth & 5.0000 & 140 & 0.3889 \\
 max\_depth & 8.0000 & 102 & 0.2833 \\
-max\_depth & 3.0000 & 92 & 0.2556 \\
 min\_samples\_leaf & 1.0000 & 201 & 0.5583 \\
 min\_samples\_leaf & 2.0000 & 97 & 0.2694 \\
-min\_samples\_leaf & 5.0000 & 62 & 0.1722 \\
 min\_samples\_split & 2.0000 & 252 & 0.7000 \\
 min\_samples\_split & 5.0000 & 69 & 0.1917 \\
-min\_samples\_split & 10.0000 & 39 & 0.1083 \\
 n\_bootstrap & 5.0000 & 191 & 0.5306 \\
 n\_bootstrap & 20.0000 & 87 & 0.2417 \\
-n\_bootstrap & 10.0000 & 82 & 0.2278 \\
 penalty\_lambda & 10.0000 & 233 & 0.6472 \\
 penalty\_lambda & 0.0000 & 61 & 0.1694 \\
-penalty\_lambda & 0.0100 & 41 & 0.1139 \\
-penalty\_lambda & 1.0000 & 22 & 0.0611 \\
-penalty\_lambda & 0.1000 & 3 & 0.0083 \\
 \end{tabular}
-\end{table*}
+\end{table}
 
 \textbf{Discussion.} The results descriptively favor SPDT but do not
 reach confirmatory evidence. SPDT achieves the best mean rank (1.500 vs

@@ -34,7 +34,9 @@ def df_to_md(df: pd.DataFrame, floatfmt=4) -> str:
     d = df.copy()
     for c in d.columns:
         if pd.api.types.is_float_dtype(d[c]):
-            d[c] = d[c].map(lambda v: f"{v:.{floatfmt}f}")
+            d[c] = d[c].map(
+                lambda v: "-" if pd.isna(v) else f"{v:.{floatfmt}f}")
+    d = d.fillna("-")
     header = "| " + " | ".join(map(str, d.columns)) + " |"
     sep = "|" + "|".join(["---"] * len(d.columns)) + "|"
     rows = ["| " + " | ".join(map(str, r)) + " |" for r in d.values]
@@ -47,17 +49,17 @@ L = {
         "stats": {"test": "Uji", "statistic": "Statistik", "df": "db",
                   "p_value": "p", "n_datasets": "#dataset",
                   "kendall_w": "Kendall W", "decision": "Keputusan"},
-        "runtime": {"method": "Metode", "fit_mean": "Fit rata-rata (s)",
+        "runtime": {"method": "Metode", "fit_mean": "Fit (s)",
                     "fit_median": "Fit median (s)",
-                    "predict_mean": "Prediksi rata-rata (s)",
-                    "nodes_mean": "Node rata-rata",
-                    "depth_mean": "Kedalaman rata-rata"},
+                    "predict_mean": "Prediksi (s)",
+                    "nodes_mean": "Node",
+                    "depth_mean": "Kedalaman"},
         "stab": {"method": "Metode",
                  "disagreement_mean": "Disagreement rata-rata",
                  "disagreement_sd": "SD"},
-        "abl": {"variant": "Varian", "f1_mean": "F1 makro rata-rata",
-                "f1_sd": "SD", "fit_mean": "Fit rata-rata (s)",
-                "nodes_mean": "Node rata-rata"},
+        "abl": {"variant": "Varian", "f1_mean": "F1 makro",
+                "f1_sd": "SD", "fit_mean": "Fit (s)",
+                "nodes_mean": "Node"},
         "inv": {"dataset": "Dataset", "n_samples": "N",
                 "n_features": "Fitur", "n_classes": "Kelas",
                 "source": "Sumber"},
@@ -85,17 +87,17 @@ L = {
         "stats": {"test": "Test", "statistic": "Statistic", "df": "df",
                   "p_value": "p", "n_datasets": "#datasets",
                   "kendall_w": "Kendall W", "decision": "Decision"},
-        "runtime": {"method": "Method", "fit_mean": "Fit mean (s)",
+        "runtime": {"method": "Method", "fit_mean": "Fit (s)",
                     "fit_median": "Fit median (s)",
-                    "predict_mean": "Predict mean (s)",
-                    "nodes_mean": "Mean nodes",
-                    "depth_mean": "Mean depth"},
+                    "predict_mean": "Predict (s)",
+                    "nodes_mean": "Nodes",
+                    "depth_mean": "Depth"},
         "stab": {"method": "Method",
                  "disagreement_mean": "Mean disagreement",
                  "disagreement_sd": "SD"},
-        "abl": {"variant": "Variant", "f1_mean": "Mean macro F1",
-                "f1_sd": "SD", "fit_mean": "Fit mean (s)",
-                "nodes_mean": "Mean nodes"},
+        "abl": {"variant": "Variant", "f1_mean": "Macro F1",
+                "f1_sd": "SD", "fit_mean": "Fit (s)",
+                "nodes_mean": "Nodes"},
         "inv": {"dataset": "Dataset", "n_samples": "N",
                 "n_features": "Features", "n_classes": "Classes",
                 "source": "Source"},
@@ -116,6 +118,34 @@ L = {
         "title": ("Stability-Penalized Split Selection for Decision Tree "
                   "Classification: A Reproducible Multi-Dataset Evaluation"),
     },
+}
+
+
+METHOD_LABELS = {
+    "cart_sklearn": "CART-skl",
+    "cart_custom": "CART-cust",
+    "spdt": "SPDT",
+    "random_forest": "RF",
+}
+
+
+def label_methods(df: pd.DataFrame) -> pd.DataFrame:
+    d = df.copy()
+    if "method" in d.columns:
+        d["method"] = d["method"].map(lambda m: METHOD_LABELS.get(m, m))
+    return d
+
+
+ABL_LABELS = {
+    "A0_lam0": "A0 (lam=0)",
+    "A1_lam0.1_B10": "A1 (lam=.1)",
+    "A1_lam1_B10": "A1 (lam=1)",
+    "A2_B5": "A2 (B=5)",
+    "A2_B20": "A2 (B=20)",
+    "A3_d3_leaf1": "A3 d3 l1",
+    "A3_d3_leaf5": "A3 d3 l5",
+    "A3_d8_leaf1": "A3 d8 l1",
+    "A3_d8_leaf5": "A3 d8 l5",
 }
 
 
@@ -154,19 +184,25 @@ def main():
     for ds in pivot_m.index:
         row = {"Dataset": ds}
         for m in methods:
-            row[m] = f"{pivot_m.loc[ds, m]:.3f} +/- {pivot_s.loc[ds, m]:.3f}"
-        row["Delta (spdt-cart_custom)"] = (
+            row[METHOD_LABELS[m]] = (
+                f"{pivot_m.loc[ds, m]:.3f} +/- {pivot_s.loc[ds, m]:.3f}")
+        row["SPDT-CART"] = (
             f"{pivot_m.loc[ds, 'spdt'] - pivot_m.loc[ds, 'cart_custom']:+.4f}")
         perf_rows.append(row)
     tbl_perf = df_to_md(pd.DataFrame(perf_rows), floatfmt=3)
 
-    tbl_ranks = df_to_md(ranks.rename(columns=T["ranks"]))
+    tbl_ranks = df_to_md(label_methods(ranks).rename(columns=T["ranks"]),
+                         floatfmt=3)
     tbl_stat = df_to_md(stats.rename(columns=T["stats"]))
-    rt = runtime.rename(columns=T["runtime"])
+    rt = label_methods(runtime).rename(columns=T["runtime"])
     tbl_rt = df_to_md(rt[[c for c in rt.columns if c != "fit_median"]])
-    tbl_stab = (df_to_md(stab.rename(columns=T["stab"]))
+    tbl_stab = (df_to_md(label_methods(stab).rename(columns=T["stab"]),
+                         floatfmt=4)
                 if stab is not None else T["na"])
-    tbl_abl = (df_to_md(abl.rename(columns=T["abl"]))
+    if abl is not None:
+        abl = abl.assign(variant=abl["variant"].map(
+            lambda v: ABL_LABELS.get(v, v)))
+    tbl_abl = (df_to_md(abl.rename(columns=T["abl"]), floatfmt=4)
                if abl is not None else T["na"])
 
     inv_rows = []
@@ -176,7 +212,12 @@ def main():
                          "n_features": m["n_features"],
                          "n_classes": m["n_classes"], "source": m["source"]})
     tbl_inv = df_to_md(pd.DataFrame(inv_rows).rename(columns=T["inv"]))
-    tbl_hyp = df_to_md(hyps)
+    # frekuensi hyperparameter: 2 nilai teratas per parameter saja
+    # (tabel ilustratif; data lengkap di results/summary/hyperparameters.csv)
+    hyps = (hyps.sort_values(["parameter", "frequency"], ascending=[True, False])
+            .groupby("parameter", as_index=False)
+            .head(2).reset_index(drop=True))
+    tbl_hyp = df_to_md(hyps, floatfmt=4)
 
     pdelta = paired[(paired.method_a == "cart_custom") &
                     (paired.method_b == "spdt")].copy()
@@ -194,7 +235,11 @@ def main():
             raise RuntimeError(
                 f"Cannot build empirical paper: figure missing: {req}")
 
-    posthoc_md = (df_to_md(posthoc.rename(columns=T["posthoc"]))
+    if posthoc is not None:
+        for raw, lbl in METHOD_LABELS.items():
+            posthoc["comparison"] = posthoc["comparison"].str.replace(
+                raw, lbl, regex=False)
+    posthoc_md = (df_to_md(posthoc.rename(columns=T["posthoc"]), floatfmt=4)
                   if posthoc is not None else T["no_posthoc"])
 
     template = (PAPER / T["template"]).read_text()

@@ -157,7 +157,7 @@ part of the primary omnibus test.
 
 ## IV. Results and Discussion
 
-| Dataset | cart_sklearn | cart_custom | spdt | random_forest | Delta (spdt-cart_custom) |
+| Dataset | CART-skl | CART-cust | SPDT | RF | SPDT-CART |
 |---|---|---|---|---|---|
 | banknote | 0.982 +/- 0.008 | 0.981 +/- 0.007 | 0.981 +/- 0.007 | 0.994 +/- 0.004 | +0.0004 |
 | glass | 0.620 +/- 0.097 | 0.609 +/- 0.093 | 0.626 +/- 0.093 | 0.742 +/- 0.075 | +0.0166 |
@@ -172,9 +172,9 @@ Table: Macro-F1 mean +/- sd (descriptive, fold-level) per dataset and method.
 
 | Method | Mean rank |
 |---|---|
-| spdt | 1.5000 |
-| cart_sklearn | 2.0000 |
-| cart_custom | 2.5000 |
+| SPDT | 1.500 |
+| CART-skl | 2.000 |
+| CART-cust | 2.500 |
 
 Table: Mean Macro-F1 rank.
 
@@ -191,35 +191,35 @@ Table: Pairwise (post-hoc) comparisons.
 Paired summary SPDT vs custom CART: **6 wins / 0 ties /
 2 losses**, mean Macro-F1 difference +0.0058.
 
-| Method | Fit mean (s) | Fit median (s) | Predict mean (s) | Mean nodes | Mean depth |
+| Method | Fit (s) | Fit median (s) | Predict (s) | Nodes | Depth |
 |---|---|---|---|---|---|
-| cart_custom | 0.5340 | 0.4163 | 0.0009 | 26.6722 | 5.1000 |
-| cart_sklearn | 0.2693 | 0.2605 | 0.0010 | 27.4222 | 5.2917 |
-| random_forest | 1.1169 | 1.0863 | 0.0573 | nan | nan |
-| spdt | 21.4302 | 14.6491 | 0.0010 | 28.5944 | 5.4611 |
+| CART-cust | 0.5340 | 0.4163 | 0.0009 | 26.6722 | 5.1000 |
+| CART-skl | 0.2693 | 0.2605 | 0.0010 | 27.4222 | 5.2917 |
+| RF | 1.1169 | 1.0863 | 0.0573 | - | - |
+| SPDT | 21.4302 | 14.6491 | 0.0010 | 28.5944 | 5.4611 |
 
 Table: Computational cost.
 
 | Method | Mean disagreement | SD |
 |---|---|---|
-| cart_custom | 0.0928 | 0.0853 |
-| cart_sklearn | 0.0983 | 0.0885 |
-| random_forest | 0.0271 | 0.0337 |
-| spdt | 0.1014 | 0.0934 |
+| CART-cust | 0.0928 | 0.0853 |
+| CART-skl | 0.0983 | 0.0885 |
+| RF | 0.0271 | 0.0337 |
+| SPDT | 0.1014 | 0.0934 |
 
 Table: Prediction stability (disagreement; not an accuracy metric).
 
-| Variant | Mean macro F1 | SD | Fit mean (s) | Mean nodes |
+| Variant | Macro F1 | SD | Fit (s) | Nodes |
 |---|---|---|---|---|
-| A0_lam0 | 0.8599 | 0.1270 | 0.0201 | 37.6611 |
-| A1_lam0.1_B10 | 0.8598 | 0.1256 | 0.0860 | 37.6111 |
-| A1_lam1_B10 | 0.8601 | 0.1255 | 0.0862 | 37.5278 |
-| A2_B20 | 0.8601 | 0.1251 | 0.1136 | 37.4556 |
-| A2_B5 | 0.8613 | 0.1243 | 0.0711 | 37.4667 |
-| A3_d3_leaf1 | 0.8357 | 0.1592 | 0.0371 | 12.8722 |
-| A3_d3_leaf5 | 0.8353 | 0.1546 | 0.0373 | 11.8611 |
-| A3_d8_leaf1 | 0.8592 | 0.1272 | 0.0821 | 35.2500 |
-| A3_d8_leaf5 | 0.8521 | 0.1381 | 0.0820 | 24.7389 |
+| A0 (lam=0) | 0.8599 | 0.1270 | 0.0201 | 37.6611 |
+| A1 (lam=.1) | 0.8598 | 0.1256 | 0.0860 | 37.6111 |
+| A1 (lam=1) | 0.8601 | 0.1255 | 0.0862 | 37.5278 |
+| A2 (B=20) | 0.8601 | 0.1251 | 0.1136 | 37.4556 |
+| A2 (B=5) | 0.8613 | 0.1243 | 0.0711 | 37.4667 |
+| A3 d3 l1 | 0.8357 | 0.1592 | 0.0371 | 12.8722 |
+| A3 d3 l5 | 0.8353 | 0.1546 | 0.0373 | 11.8611 |
+| A3 d8 l1 | 0.8592 | 0.1272 | 0.0821 | 35.2500 |
+| A3 d8 l5 | 0.8521 | 0.1381 | 0.0820 | 24.7389 |
 
 Table: Ablation on identical splits.
 
@@ -227,21 +227,14 @@ Table: Ablation on identical splits.
 |---|---|---|---|
 | max_depth | 5.0000 | 140 | 0.3889 |
 | max_depth | 8.0000 | 102 | 0.2833 |
-| max_depth | 3.0000 | 92 | 0.2556 |
 | min_samples_leaf | 1.0000 | 201 | 0.5583 |
 | min_samples_leaf | 2.0000 | 97 | 0.2694 |
-| min_samples_leaf | 5.0000 | 62 | 0.1722 |
 | min_samples_split | 2.0000 | 252 | 0.7000 |
 | min_samples_split | 5.0000 | 69 | 0.1917 |
-| min_samples_split | 10.0000 | 39 | 0.1083 |
 | n_bootstrap | 5.0000 | 191 | 0.5306 |
 | n_bootstrap | 20.0000 | 87 | 0.2417 |
-| n_bootstrap | 10.0000 | 82 | 0.2278 |
 | penalty_lambda | 10.0000 | 233 | 0.6472 |
 | penalty_lambda | 0.0000 | 61 | 0.1694 |
-| penalty_lambda | 0.0100 | 41 | 0.1139 |
-| penalty_lambda | 1.0000 | 22 | 0.0611 |
-| penalty_lambda | 0.1000 | 3 | 0.0083 |
 
 Table: SPDT hyperparameter selection frequency (45 outer folds per dataset).
 

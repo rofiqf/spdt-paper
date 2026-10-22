@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.10.21)  22 OCT 2026 05:55
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.10.21)  22 OCT 2026 07:16
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -605,24 +605,18 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 254.
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [2]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 526.
+(Font)              <10> on input line 497.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 526.
+(Font)              <7> on input line 497.
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [3]
-Underfull \hbox (badness 2744) in paragraph at lines 562--566
+Underfull \hbox (badness 2744) in paragraph at lines 533--537
 \T1/ptm/m/n/10 for Gen-er-at-ing a Sta-ble De-ci-sion Tree.'' \T1/ptm/m/it/10 IEEE Ac-
  []
 
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [4]
+ [3]
 
 ** Conference Paper **
 Before submitting the final camera ready copy, remember to:
@@ -634,27 +628,25 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-[5
-
-] (./paper.aux)
+[4] (./paper.aux)
  ***********
 LaTeX2e <2026-06-01>
 L3 programming layer <2026-09-09>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 13395 strings out of 469040
- 215420 string characters out of 5457101
- 697216 words of memory out of 5000000
- 42305 multiletter control sequences out of 15000+600000
+ 13396 strings out of 469040
+ 215468 string characters out of 5457101
+ 692216 words of memory out of 5000000
+ 42307 multiletter control sequences out of 15000+600000
  744870 words of font info for 156 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  88i,11n,93p,629b,536s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </home/ropix/.TinyTeX/texmf-dist/fonts/type1/urw/courier/ucrb8a.pfb></home/ropix/.TinyTeX/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></home/ropix/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></home/ropix/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></home/ropix/.TinyTeX/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on paper.pdf (5 pages, 95421 bytes).
+Output written on paper.pdf (4 pages, 95248 bytes).
 PDF statistics:
- 152 PDF objects out of 1000 (max. 8388607)
- 133 compressed objects within 2 object streams
- 40 named destinations out of 1000 (max. 500000)
+ 150 PDF objects out of 1000 (max. 8388607)
+ 132 compressed objects within 2 object streams
+ 39 named destinations out of 1000 (max. 500000)
  81 words of extra memory for PDF output out of 10000 (max. 10000000)
 
