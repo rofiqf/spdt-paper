@@ -1,68 +1,103 @@
-# Stability-Penalized Split Selection for Decision Tree Classification
+# SPDT — Stability-Penalized Decision Tree
 
-Proyek eksperimen reproducible untuk mengevaluasi kriteria split decision tree
-yang dipenalti variansi bootstrap:
+Repositori dokumentasi **Project Mid Semester** mata kuliah Machine
+Learning, dosen pengampu **Prof. Dr. Guruh Fajar Shidik, S.Kom., M.Cs.**
+(Magister Artificial Intelligence, Universitas Dian Nuswantoro).
 
-    Score(s) = Gain(s, D) − λ · Var_b[Gain(s, D^(b))]
+> Tugas: pengembangan metode ML yang sederhana namun orisinal, paper
+> format prosiding IEEE, dikerjakan individu, mahasiswa sebagai penulis
+> pertama + 7 dosen co-author, referensi dari Scopus/IEEE/ACM/
+> ScienceDirect/SpringerLink, Turnitin ≤18%.
 
-**Status metode: proposed / candidate formulation — klaim novelty TIDAK
-diasumsikan.** Prior-art gate wajib dilakukan sebelum eksperimen besar
-(lihat `docs/prior_art_matrix.csv`).
+## Tentang proyek ini
 
-## Lingkungan
+Saya menguji satu ide sederhana pada **pohon keputusan CART**: kalau
+gain Gini sebuah calon split "goyang" (bervariasi besar) ketika data
+node di-bootstrap ulang, mungkin split itu kurang bisa dipercaya.
+Dari situ lahir kriteria kandidat:
 
-- Python 3.12.x (Ubuntu), paket ter-pin di `requirements.txt`
-- venv lokal: `python3.12 -m venv --without-pip .venv` + get-pip bootstrap
-  (server ini tidak punya `ensurepip`/`python3.12-venv`)
-- Selalu gunakan `.venv/bin/python`
+```
+Score(s) = Gain(s,D) − λ · Var_bootstrap[Gain(s,D^(b))]
+```
 
-## Alur kerja
+dan varian ternormalisasinya `Gain − λ·Var/(Gain²+ε)`.
+
+**Hasilnya jujur, tidak semua bagus:**
+
+- Di 8 dataset UCI dengan nested CV (45 evaluasi per dataset-metode),
+  penalti variansi **tidak terbukti** meningkatkan Macro-F1
+  (Friedman p=0.135 untuk SPDT; p=0.290 untuk varian ternormalisasi).
+- Justru muncul satu sinyal menarik: di bawah **label noise 20%**,
+  varian ternormalisasi menurun paling lambat (setelah koreksi Holm,
+  p=0.017 — tapi tetap eksploratori, perlu replikasi).
+- Penalti variansi **tidak** memperbaiki stabilitas split maupun
+  prediksi.
+- Comparator terdekat dari literatur (ANLS, IEEE Access 2024) yang saya
+  re-implementasikan faithful ternyata lebih menjanjikan secara
+  deskriptif — dan membuktikan bahwa *stabilitas split ≠ stabilitas
+  prediksi*.
+
+Kesimpulan lengkap ada di
+[`paper/paper_ieee_extended.pdf`](paper/paper_ieee_extended.pdf)
+(IEEE conference, 6 halaman).
+
+## Isi repositori
+
+```
+paper/               naskah IEEE + PDF final + references.bib
+src/                 implementasi (tree.py, anls.py, noise, stabilitas, engine)
+scripts/             runner eksperimen + validasi reproduksibilitas
+configs/             konfigurasi beku (baseline + ekstensi)
+results/             hasil baseline · results/extension/ hasil ekstensi
+figures/             seluruh grafik (termasuk 4 figure ekstensi)
+tests/               37 unit tests
+docs/                protokol, ringkasan hasil, prior-art, skrip video, audit
+audit/               paket audit (verdict MINOR REVISION, bukti, rencana)
+submission/          bundle siap kumpul (PDF + ringkasan + manifest checksum)
+HANDOVER.md          catatan antar-sesi untuk melanjutkan proyek
+```
+
+## Cara menjalankan ulang (reproduce)
 
 ```bash
-.venv/bin/python -m pytest -q                 # unit tests
-.venv/bin/python scripts/run_pilot.py         # pilot kecil (Stage 4)
-.venv/bin/python scripts/run_full.py          # nested CV penuh (Stage 6)
-.venv/bin/python scripts/run_ablation.py      # ablation split identik (Stage 7)
-.venv/bin/python scripts/analyze_results.py   # ringkasan statistik
-.venv/bin/python scripts/make_figures.py      # semua figure
-.venv/bin/python scripts/validate_reproducibility.py  # repro-bit-exact
-bash scripts/build_pdf.sh                     # paper.pdf IEEEtran dari draft.md
-```
+# lingkungan
+python3.12 -m venv --without-pip .venv
+curl -sSL https://bootstrap.pypa.io/get-pip.py | .venv/bin/python
+.venv/bin/python -m pip install -r requirements.txt
 
-Lihat `docs/method.md` untuk definisi metode, `docs/limitations.md`
-untuk keterbatasan wajib, dan `docs/protocol_freeze.md` untuk protokol
-beku + addendum (fix determinisme seed CART sklearn).
+# tes (37 passed)
+.venv/bin/python -m pytest -q
 
-## Struktur
-
-```
-configs/      konfigurasi eksperimen (freeze di Stage 5)
-src/          implementasi (tree, data, evaluate, statistics, plots, baselines)
-scripts/      runner pilot & full
-tests/        unit tests (kebenaran CART, leakage, reproducibility)
-docs/         prior-art matrix, metode, keterbatasan
-results/      fold metrics (raw) & ringkasan (summary)
-figures/      plot hasil
-paper/        draf paper (Bahasa Indonesia) + references.bib
-logs/         log eksekusi & manifest
-data/         dataset mentah + metadata + sha256
-```
-
-## Catatan jaringan server
-
-OpenML terblokir di server ini; dataset diperoleh via `ucimlrepo` (UCI API)
-atau static zip UCI (fallback Seeds). Lihat `src/data.py`.
-
-## Extension (2026-10-22)
-
-Reproduksi eksperimen ekstensi (A/B/C/D):
-
-```bash
-.venv/bin/python scripts/run_extension_full.py    # ±2.5-4 jam
+# baseline (±3 jam) lalu ekstensi (±2.6 jam)
+.venv/bin/python scripts/run_full.py
+.venv/bin/python scripts/run_ablation.py
+.venv/bin/python scripts/run_extension_full.py
 .venv/bin/python scripts/run_extension_ablation.py
-.venv/bin/python scripts/make_extension_figures.py
-.venv/bin/python scripts/make_extension_tables.py
+
+# validasi: hasil harus bit-exact sama dengan CSV tersimpan
+.venv/bin/python scripts/validate_reproducibility.py
+.venv/bin/python scripts/validate_extension_reproducibility.py
+
+# rebuild paper (butuh TinyTeX/pdflatex)
+cd paper && latexmk -pdf main.tex && cp main.pdf paper_ieee_extended.pdf
 ```
 
-Paper extended: `paper/paper_ieee_extended.pdf` (IEEEtran, 6 halaman).
-Protokol: `docs/experiment_protocol.md` (freeze + 2 amendemen).
+## Penulis
+
+**Rofiq Fauzi** (penulis pertama, mahasiswa) — bersama 7 dosen
+co-author dari Universitas Dian Nuswantoro: Guruh Fajar Shidik,
+Rindra Yusianto, Tita Talitha, Aripin, Farrikh Alzami,
+Ratih Setyaningrum, Firman Wahyudi.
+
+## Catatan integritas
+
+- Seluruh angka dihasilkan dari menjalankan pipeline ter-seed di atas;
+  klaim numerik paper diverifikasi ulang terhadap CSV tersimpan
+  (lihat `audit/`).
+- Penggunaan AI (Kimi, Moonshot AI) diakui di bagian Acknowledgment
+  paper: untuk implementasi kode, dukungan penelusuran literatur, dan
+  penyuntingan bahasa; semua hasil tetap dieksekusi dan diverifikasi
+  secara nyata.
+- Klaim kebaruan formulasi **sengaja ditahan** — penelusuran tidak
+  menemukan ekuivalen formula-level, tetapi hasil pencarian negatif
+  bukan bukti kebaruan.
