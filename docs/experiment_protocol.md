@@ -35,13 +35,24 @@ Motivasi: kendali runtime; semua keputusan hanya dari training fold.
 
 - A normalized_penalty: evaluasi bersih 6 metode + root split + counter
   kandidat/bootstrap-gain-eval. Output: normalized_penalty.csv.
-- B noise_robustness: level {0,.05,.10,.20,.30} x 3 realisasi, mask
+- B noise_robustness: level {0,.05,.10,.20,.30} x 2 realisasi, mask
   identik antar metode, test bersih, parameter frozen. ANLS DIKECUALIKAN
   (biaya 75 fit bootstrap-heavy per fold tidak proporsional; fokus M0-M3).
   Output: noise_robustness.csv.
-- C split_stability: S=10 sub-sampel 90%, agreement fitur root, variasi
+- C split_stability: S=8 sub-sampel 90%, agreement fitur root, variasi
   threshold (fitur modal saja), disagreement prediksi. Output:
   split_stability.csv.
+
+## Amendemen pasca-pilot (2026-10-22, sebelum full run)
+
+Pilot iris memakan ~13 menit; bottleneck = RandomForest 300 pohon dievaluasi
+86x per fold (A:1, B:75, C:10). Amendemen (dokumentasi wajib):
+1. rf_trees 300 -> 100 (hanya ekstensi; hasil RF baseline lama tidak diubah);
+2. noise_realizations 3 -> 2;
+3. stability_subsamples 10 -> 8.
+Proyeksi penuh setelah amendemen: ~2.5-4 jam. Protocol dianggap FROZEN
+setelah amendemen ini; deviasi berikutnya (bila ada) wajib didokumentasikan
+ulang.
 - D runtime_tradeoff: agregasi waktu + counter + peak memory probe
   (tracemalloc, satu proses, wdbc) — estimasi terdokumentasi, bukan
   benchmark terkontrol. Output: runtime_tradeoff.csv.

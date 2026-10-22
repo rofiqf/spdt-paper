@@ -35,7 +35,7 @@ def main():
     cfg = ee.default_cfg()
     cfg.update({k: ycfg[k] for k in ("tune_B", "epsilon", "noise_levels",
                                      "noise_realizations",
-                                     "stability_subsamples")})
+                                     "stability_subsamples", "rf_trees")})
     cfg["pilot_datasets"] = ycfg["pilot_datasets"]
     cfg["full_datasets"] = ycfg["full_datasets"]
     manifest = {
@@ -44,7 +44,7 @@ def main():
         "python": platform.python_version(), "platform": platform.platform(),
         "cfg": {k: cfg[k] for k in ("tune_B", "epsilon", "noise_levels",
                                     "noise_realizations",
-                                    "stability_subsamples")},
+                                    "stability_subsamples", "rf_trees")},
         "datasets": cfg["full_datasets"],
     }
     rows_a, rows_b, rows_c = ee.run_datasets(cfg, cfg["full_datasets"],

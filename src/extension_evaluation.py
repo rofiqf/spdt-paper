@@ -106,7 +106,8 @@ def make_method_pipes(struct: dict, lam2: float, lam3: float,
         "random_forest": Pipeline([
             ("imputer", SimpleImputer(strategy="median")),
             ("clf", RandomForestClassifier(
-                n_estimators=300, random_state=20261021, n_jobs=-1))]),
+                n_estimators=cfg.get("rf_trees", 100),
+                random_state=20261021, n_jobs=-1))]),
         # M5: ANLS dengan parameter default paper (tidak ditune)
         "anls": Pipeline([
             ("imputer", SimpleImputer(strategy="median")),

@@ -25,7 +25,7 @@ def main():
     cfg = ee.default_cfg()
     cfg.update({k: ycfg[k] for k in ("tune_B", "epsilon", "noise_levels",
                                      "noise_realizations",
-                                     "stability_subsamples")})
+                                     "stability_subsamples", "rf_trees")})
     cfg["pilot_datasets"] = ycfg["pilot_datasets"]
     cfg["full_datasets"] = ycfg["full_datasets"]
     manifest = {"started_utc": datetime.now(timezone.utc).isoformat(),
@@ -33,7 +33,8 @@ def main():
                                          ("tune_B", "epsilon",
                                           "noise_levels",
                                           "noise_realizations",
-                                          "stability_subsamples")}}
+                                          "stability_subsamples",
+                                          "rf_trees")}}
     rows_a, rows_b, rows_c = ee.run_datasets(cfg, cfg["pilot_datasets"],
                                              manifest)
     elapsed = time.perf_counter() - t0
