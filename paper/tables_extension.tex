@@ -1,0 +1,99 @@
+% AUTO-GENERATED from results/extension/ -- do not edit
+
+\begin{table*}[!t]
+\caption{Macro-F1 (Mean Over 45 Outer Folds) per Dataset, Extension Experiment A}
+\label{tab:extperf}
+\centering
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lcccccc@{}}
+\toprule
+Dataset & CART-cust & SPDT & SPDT-norm & ANLS & CART-skl & RF \\
+\midrule
+banknote & 0.9807 & 0.9810 & 0.9856 & 0.9774 & 0.9816 & 0.9932 \\
+glass & 0.6095 & 0.6186 & 0.6160 & 0.6498 & 0.6200 & 0.7572 \\
+ionosphere & 0.8813 & 0.8762 & 0.8776 & 0.8793 & 0.8728 & 0.9274 \\
+iris & 0.9449 & 0.9456 & 0.9433 & 0.9412 & 0.9493 & 0.9546 \\
+seeds & 0.9063 & 0.9078 & 0.9025 & 0.9116 & 0.8971 & 0.9218 \\
+sonar & 0.7057 & 0.7216 & 0.7096 & 0.7118 & 0.7188 & 0.8221 \\
+wdbc & 0.9247 & 0.9239 & 0.9213 & 0.9248 & 0.9247 & 0.9572 \\
+wine & 0.9047 & 0.9051 & 0.9010 & 0.9143 & 0.9053 & 0.9804 \\
+\bottomrule
+\end{tabular*}
+\end{table*}
+
+\begin{table}[!t]
+\caption{Mean Macro-F1 by Training Label Noise Level}
+\label{tab:noise}
+\centering
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Noise & CART-cust & SPDT & SPDT-norm & RF \\
+\midrule
+0\% & 0.8572 & 0.8600 & 0.8571 & 0.9142 \\
+5\% & 0.8413 & 0.8392 & 0.8461 & 0.9043 \\
+10\% & 0.8178 & 0.8201 & 0.8284 & 0.8948 \\
+20\% & 0.7702 & 0.7726 & 0.7936 & 0.8597 \\
+30\% & 0.7161 & 0.7171 & 0.7277 & 0.7914 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[!t]
+\caption{Split and Prediction Stability (Mean Over Folds and Datasets)}
+\label{tab:stability}
+\centering
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Method & Root-feature agr. & Threshold var. & Prediction dis. \\
+\midrule
+CART-cust & 0.8306 & 2.5564 & 0.0926 \\
+CART-skl & 0.8301 & 2.5511 & 0.0972 \\
+SPDT & 0.8296 & 2.6105 & 0.0957 \\
+SPDT-norm & 0.7822 & 3.3918 & 0.1052 \\
+ANLS & 0.8486 & 2.4415 & 0.1094 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[!t]
+\caption{Ablation on Identical Splits (Frozen Structure, Mean Macro-F1)}
+\label{tab:ablation}
+\centering
+\begin{tabular}{@{}lrr@{}}
+\toprule
+Variant & Macro F1 & SD \\
+\midrule
+A3n\_lam0.1 & 0.8617 & 0.1257 \\
+A2\_B5 & 0.8586 & 0.1278 \\
+A4\_d8\_leaf1 & 0.8585 & 0.1283 \\
+A2\_B20 & 0.8584 & 0.1293 \\
+A1\_lam10 & 0.8583 & 0.1297 \\
+A1\_lam1 & 0.8578 & 0.1308 \\
+A1\_lam0.1 & 0.8577 & 0.1301 \\
+A0\_lam0 & 0.8572 & 0.1314 \\
+A3n\_lam10 & 0.8537 & 0.1323 \\
+A2n\_eps0.001 & 0.8527 & 0.1297 \\
+A4\_d8\_leaf5 & 0.8521 & 0.1381 \\
+A2n\_eps1e-06 & 0.8494 & 0.1238 \\
+A4\_d3\_leaf1 & 0.8359 & 0.1591 \\
+A4\_d3\_leaf5 & 0.8353 & 0.1546 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[!t]
+\caption{Computational Cost per Outer Fold (Refit of Tuned Configuration)}
+\label{tab:runtime}
+\centering
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Method & Fit (s) & Predict (s) & Candidates & Boot. gain evals \\
+\midrule
+ANLS & 2.2063 & 0.0010 & - & - \\
+CART-cust & 0.0173 & 0.0008 & 17727 & 0 \\
+CART-skl & 0.0040 & 0.0009 & - & 0 \\
+RF & 0.1550 & 0.0342 & - & - \\
+SPDT & 0.0676 & 0.0009 & 17753 & 177531 \\
+SPDT-norm & 0.0758 & 0.0009 & 19291 & 192914 \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.10.21)  22 OCT 2026 07:40
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.10.21)  22 OCT 2026 12:31
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -251,41 +251,98 @@ File: l3backend-dvips.def 2026-09-09 L3 backend support: dvips
 \g__pdfannot_backend_int=\count307
 \g__pdfannot_backend_link_int=\count308
 \g__pdfannot_backend_link_sf_int=\count309
-) (./main.aux)
+) (./main.aux
+
+LaTeX Warning: Label `tab:stability' multiply defined.
+
+
+LaTeX Warning: Label `tab:ablation' multiply defined.
+
+
+LaTeX Warning: Label `tab:runtime' multiply defined.
+
+)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 34.
-LaTeX Font Info:    ... okay on input line 34.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 28.
+LaTeX Font Info:    ... okay on input line 28.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 28.
+LaTeX Font Info:    ... okay on input line 28.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 28.
+LaTeX Font Info:    ... okay on input line 28.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 28.
+LaTeX Font Info:    ... okay on input line 28.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 28.
+LaTeX Font Info:    ... okay on input line 28.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 28.
+LaTeX Font Info:    ... okay on input line 28.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 28.
+LaTeX Font Info:    ... okay on input line 28.
 
 -- Lines per column: 56 (exact).
-LaTeX Font Info:    Trying to load font information for U+msa on input line 49.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 38.
 (/home/ropix/.TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 49.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 38.
  (/home/ropix/.TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-)
-Underfull \hbox (badness 2556) in paragraph at lines 99--110
-[]\OT1/ptm/m/n/10 Structural tree in-sta-bil-ity was for-mal-ized by Li and
+) [1
+
+
+] (./tables_generated.tex) (./tables_extension.tex)
+Underfull \hbox (badness 1442) in paragraph at lines 215--226
+\OT1/ptm/m/n/10 the least among sin-gle trees: me-dian paired dif-fer-ences
  []
 
-[1
 
+! LaTeX Error: Cannot determine size of graphic in ../figures/noise_robustness_macro_f1.png (no BoundingBox).
 
-] (./tables_generated.tex) [2] (./main.bbl [3])
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.229 ...../figures/noise_robustness_macro_f1.png}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: ../figures/noise_robustness_macro_f1.png Graphic file (type eps)
+<../figures/noise_robustness_macro_f1.png> [2]
+
+! LaTeX Error: Cannot determine size of graphic in ../figures/root_split_agreement.png (no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.250 ...dth]{../figures/root_split_agreement.png}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: ../figures/root_split_agreement.png Graphic file (type eps)
+<../figures/root_split_agreement.png>
+
+! LaTeX Error: Cannot determine size of graphic in ../figures/prediction_disagreement.png (no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.256 ...]{../figures/prediction_disagreement.png}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: ../figures/prediction_disagreement.png Graphic file (type eps)
+<../figures/prediction_disagreement.png>
+Underfull \vbox (badness 3623) has occurred while \output is active []
+
+ [3] [4] (./main.bbl
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [5])
 
 ** Conference Paper **
 Before submitting the final camera ready copy, remember to:
@@ -297,21 +354,23 @@ Before submitting the final camera ready copy, remember to:
  uses only Type 1 fonts and that every step in the generation
  process uses the appropriate paper size.
 
-[4
-
-] (./main.aux)
+[6] (./main.aux)
  ***********
 LaTeX2e <2026-06-01>
 L3 programming layer <2026-09-09>
  ***********
+
+
+LaTeX Warning: There were multiply-defined labels.
+
  ) 
 Here is how much of TeX's memory you used:
- 3064 strings out of 469040
- 51797 string characters out of 5457101
- 498474 words of memory out of 5000000
- 32169 multiletter control sequences out of 15000+600000
+ 3135 strings out of 469040
+ 54552 string characters out of 5457101
+ 507995 words of memory out of 5000000
+ 32232 multiletter control sequences out of 15000+600000
  658233 words of font info for 110 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 57i,8n,65p,341b,270s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 57i,8n,65p,1681b,284s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on main.dvi (4 pages, 27200 bytes).
+Output written on main.dvi (6 pages, 35512 bytes).

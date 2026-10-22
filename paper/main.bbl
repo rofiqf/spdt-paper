@@ -20,12 +20,6 @@
 \providecommand{\BIBdecl}{\relax}
 \BIBdecl
 
-\bibitem{breiman1984cart}
-L.~Breiman, J.~H. Friedman, R.~A. Olshen, and C.~J. Stone, \emph{Classification and Regression Trees}.\hskip 1em plus 0.5em minus 0.4em\relax Belmont, CA: Wadsworth; expanded edition Chapman \& Hall/CRC, 1993, 1984, buku fondasi; tanpa DOI/record portal (kepatuhan: ditandai di audit).
-
-\bibitem{quinlan1986induction}
-J.~R. Quinlan, ``Induction of decision trees,'' \emph{Machine Learning}, vol.~1, no.~1, pp. 81--106, 1986.
-
 \bibitem{li2002instability}
 R.-H. Li and S.~Clarke, ``Instability of decision tree classification algorithms,'' in \emph{Proceedings of the Eighth ACM SIGKDD International Conference on Knowledge Discovery and Data Mining (KDD '02)}.\hskip 1em plus 0.5em minus 0.4em\relax ACM, 2002, pp. 570--575.
 
@@ -50,6 +44,9 @@ J.~Lee, M.~K. Sim, and J.-S. Hong, ``Assessing decision tree stability: A compre
 \bibitem{mirzamomen2017stable}
 Z.~Mirzamomen and M.~R. Kangavari, ``A framework to induce more stable decision trees for pattern classification,'' \emph{Pattern Analysis and Applications}, vol.~20, no.~4, pp. 991--1004, 2017.
 
+\bibitem{dannegger2000nls}
+F.~Dannegger, ``Tree stability diagnostics and some remedies for instability,'' \emph{Statistics in Medicine}, vol.~19, no.~4, pp. 475--491, 2000, scopus-indexed venue (Wiley); NLS bootstrap node stabilization.
+
 \bibitem{wang2017tsallis}
 Y.~Wang, S.-T. Xia, and J.~Wu, ``A less-greedy two-term tsallis entropy information metric approach for decision tree classification,'' \emph{Knowledge-Based Systems}, vol. 120, pp. 34--42, 2017.
 
@@ -62,10 +59,13 @@ C.~Strobl, A.-L. Boulesteix, and T.~Augustin, ``Unbiased split selection for cla
 \bibitem{domingos2000vfdt}
 P.~Domingos and G.~Hulten, ``Mining high-speed data streams,'' in \emph{Proceedings of the Sixth ACM SIGKDD International Conference on Knowledge Discovery and Data Mining (KDD '00)}.\hskip 1em plus 0.5em minus 0.4em\relax ACM, 2000, pp. 71--80.
 
+\bibitem{delise2026era}
+T.~Delise, ``Era splitting -- invariant learning for decision trees,'' \emph{Expert Systems with Applications}, vol. 299, p. 129687, 2026.
+
 \bibitem{chen2016xgboost}
 T.~Chen and C.~Guestrin, ``{XGBoost}: A scalable tree boosting system,'' in \emph{Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining}.\hskip 1em plus 0.5em minus 0.4em\relax ACM, 2016, pp. 785--794.
 
-\bibitem{delise2026era}
-T.~Delise, ``Era splitting -- invariant learning for decision trees,'' \emph{Expert Systems with Applications}, vol. 299, p. 129687, 2026.
+\bibitem{himabindu2015cvdt}
+K.~Hima~Bindu and C.~Raghavendra~Rao, ``Coefficient of variation based decision tree for fuzzy classification,'' in \emph{FANCCO 2015, Advances in Intelligent Systems and Computing, vol. 415}.\hskip 1em plus 0.5em minus 0.4em\relax Springer Cham, 2015, cvGain impurity family (CV as impurity, not a gain-dispersion penalty).
 
 \end{thebibliography}

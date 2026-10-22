@@ -52,3 +52,17 @@ data/         dataset mentah + metadata + sha256
 
 OpenML terblokir di server ini; dataset diperoleh via `ucimlrepo` (UCI API)
 atau static zip UCI (fallback Seeds). Lihat `src/data.py`.
+
+## Extension (2026-10-22)
+
+Reproduksi eksperimen ekstensi (A/B/C/D):
+
+```bash
+.venv/bin/python scripts/run_extension_full.py    # ±2.5-4 jam
+.venv/bin/python scripts/run_extension_ablation.py
+.venv/bin/python scripts/make_extension_figures.py
+.venv/bin/python scripts/make_extension_tables.py
+```
+
+Paper extended: `paper/paper_ieee_extended.pdf` (IEEEtran, 6 halaman).
+Protokol: `docs/experiment_protocol.md` (freeze + 2 amendemen).

@@ -1,31 +1,26 @@
-# Keterbatasan yang Wajib Dilaporkan
+# Keterbatasan (diperbarui untuk ekstensi, 2026-10-22)
 
-1. **Novelty tidak established.** Prior-art gate (2026-10-22) tidak menemukan
-   ekuivalen formula-level, tetapi beberapa karya sangat dekat secara konsep
-   (ANLS Lee et al. 2024; NLS/Dannegger via Briand et al. 2009; era splitting
-   Delise 2026; MinimaxSplit Luo 2025; ctree Hothorn 2006; VFDT Domingos &
-   Hulten 2000). Paper tidak boleh mengklaim metode baru secara mutlak.
-2. **V(s) scale-dependent.** Variansi gain bergantung pada skala gain itu
-   sendiri; λ tidak portable antar dataset/node. Penyetelan λ per dataset
-   melalui nested CV adalah keharusan, bukan pilihan.
-3. **Biaya komputasi.** Setiap node mengevaluasi B resample untuk semua
-   kandidat split; overhead besar vs CART murni dan tumbuh dengan ukuran
-   node × jumlah fitur × B.
-4. **Unit inferensi terbatas.** 8 dataset (target ≥6) kecil–menengah;
-   kekuatan uji Friedman/Wilcoxon rendah; hasil p ≥ 0.05 TIDAK boleh
-   diartikan sebagai bukti kesetaraan.
-5. **Fold CV berkorelasi.** 45 outer fold per dataset-method bersifat
-   deskriptif; rata-rata per dataset adalah satu-satunya unit inferensi.
-6. **Metrik stabilitas terpisah.** Disagreement antar model ter-resample
-   dilaporkan terpisah dari akurasi; penalti bootstrap ≠ bukti stabilitas
-   terbukti meningkat secara kausal.
-7. **Hanya impuritas Gini, axis-parallel, numeric.** Tidak menangani
-   kategorik native, missing value internal (imputasi median upstream),
-   pruning pasca-pohon, atau metrik lain.
-8. **Bootstrap resample dari node kecil.** Untuk node kecil, gain resample
-   berisiko degenerate/bernilai sama; kebijakan empty-child sudah
-   ditetapkan tetapi tetap kaku.
-9. **Varian eksploratori normalized penalty** belum divalidasi sebagai
-   metode utama dan hanya boleh dibahas sebagai eksplorasi.
-10. **Belum tentu berlaku** untuk dataset berskala besar/high-dimensional
-    modern; semua dataset benchmark berukuran kecil (150–1.372 sampel).
+Keterbatasan baseline tetap berlaku (lihat git history versi sebelumnya):
+8 dataset kecil, Gini saja, proxy stabilitas tunggal, novelty formula-level
+belum established, klaim "belum pernah" dilarang.
+
+## Keterbatasan tambahan ekstensi
+
+1. **Power statistik** tetap 8 dataset; sinyal robustness noise bersifat
+   eksploratori (bukan jalur konfirmatori), multi-level, dan perlu
+   replikasi independen pada benchmark lebih besar.
+2. **Protokol noise**: label dikorupsi independen dari fitur; noise nyata
+   sering tidak uniform. Tuning dibekukan dari label bersih — salah satu
+   dari beberapa protokol yang defensible.
+3. **ANLS**: re-implementation faithful dengan deviasi terdokumentasi
+   (cap iterasi 400; cabang kategoris dihilangkan karena data numerik).
+   Tidak ada official code release untuk validasi silang.
+4. **Waktu refit vs tuning**: tabel runtime memuat refit konfigurasi
+   terpilih; overhead tuning staged (S1–S3) terpisah dan mendominasi —
+   jangan membandingkan angka refit dengan waktu grid search penuh.
+5. **Amendemen protokol pasca-pilot** (RF 100 pohon, 2 realisasi, S=8,
+   cap ANLS 400) terdokumentasi, namun tetap deviasi dari rencana awal.
+6. **Comparator alternatif** (minimax split, conditional inference trees)
+   dianalisis tetapi tidak dibenchmark.
+7. Stabilitas split diukur hanya di root; stabilitas node dalam tidak
+   dilaporkan.

@@ -1,29 +1,23 @@
-% SPDT paper -- IEEE conference manuscript
-% Official IEEE template: IEEEtran.cls v1.8+ (conference mode)
+% SPDT extension paper -- IEEE conference manuscript
+% Official IEEE template: IEEEtran.cls (conference mode)
 % Compile: latexmk -pdf main.tex  (see paper/README.md)
 \documentclass[conference]{IEEEtran}
 \IEEEoverridecommandlockouts
 
-\usepackage{cite}                 % IEEE-style numeric citation compression
+\usepackage{cite}
 \usepackage{amsmath,amsthm,amsfonts}
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{textcomp}
-\usepackage{xurl}                 % line-breakable URLs in references
+\usepackage{xurl}
 \usepackage{graphicx}
 
-% ---------------------------------------------------------------------------
-% TODO(AUTHORSHIP) -- SIX FACULTY CO-AUTHORS REQUIRED BY THE COURSE.
-% Identities have NOT been confirmed by the user. Do not fabricate names.
-% After confirmation, extend the \author block with:
-%   \and
-%   \IEEEauthorblockN{<Full Name>}
-%   \IEEEauthorblockA{<Department>\\<University>\\City, Country\\email}
-% The first author (student) must remain first.
-% ---------------------------------------------------------------------------
+% TODO(AUTHORSHIP): six faculty co-authors required by the course; identities
+% NOT confirmed by the user -- do not fabricate. Extend \author after
+% confirmation. First author (student) must remain first.
 
-\title{Stability-Penalized Split Selection for Decision Tree Classification:\\
-A Reproducible Multi-Dataset Evaluation}
+\title{Evaluating Normalized Bootstrap Gain-Variance Penalties\\
+for Robust Decision Tree Classification}
 
 \author{\IEEEauthorblockN{Rofiq Fauzi}
 \IEEEauthorblockA{Magister Artificial Intelligence\\
@@ -36,217 +30,300 @@ p36202600047@mhs.dinus.ac.id}}
 \maketitle
 
 \begin{abstract}
-The CART decision tree is fast and interpretable, but its structure is
-unstable: small changes in the training data can alter the selected split
-and, ultimately, the predictions. This study evaluates a simple candidate
-formulation, named Stability-Penalized Decision Tree (SPDT), in which each
-candidate split is scored as Gini gain minus a weighted penalty on the
-variance of that gain over bootstrap resamples of the node data.
-A literature search up to 22 October 2026 found no formula-level
-equivalent of this criterion, but the tree-stability research space is
-crowded; the formulation is therefore positioned as a candidate, not as a
-novelty claim. The evaluation uses eight UCI tabular classification
-datasets with repeated nested cross-validation (5 folds $\times$ 3 repeats
-on three seeds), hyperparameter tuning in the inner loop, and Macro-F1 as
-the primary metric. Results: SPDT versus custom CART ($\lambda{=}0$)
-records six wins, zero ties, and two losses with a mean Macro-F1
-difference of $+0.0058$. The Friedman test gives
-$\chi^2(2){=}4.0000$, $p{=}0.1353$, Kendall's $W{=}0.2500$ --- insufficient
-evidence to reject the null hypothesis, so confirmatory post-hoc
-comparisons were not run. Ablations show that the penalty strength
-$\lambda$ and the number of resamples $B$ barely affect Macro-F1, tree
-depth constraints matter far more, and the prediction-stability measure of
-SPDT is slightly worse than that of custom CART at roughly $40\times$ the
-fitting time. These findings are an honest null result: across the eight
-small-to-medium datasets tested, the bootstrap gain-variance penalty
-provides no benefit sufficient to outweigh the simplicity of CART, without
-ruling out benefits in other data regimes.
+This study evaluates whether theoretically motivated modifications of a
+stability-penalized decision tree (SPDT) improve classification
+performance, robustness to label noise, or split-selection stability.
+The original criterion scores a split as Gini gain minus a weighted
+bootstrap variance of that gain; we test a normalized variant that
+divides the penalty by $\mathrm{Gain}^2+\varepsilon$, targeting the
+scale-dependence of the original penalty, and we benchmark against a
+faithful re-implementation of ANLS, a published node-level bootstrap
+stabilization method. All methods share identical repeated nested
+cross-validation splits over eight UCI datasets (45 outer evaluations
+per dataset). On clean data the normalized variant does not improve
+over custom CART (3 wins, 5 losses, mean Macro-F1 difference $-0.0001$)
+and is slightly below the original SPDT (2 wins, 6 losses);
+the Friedman omnibus test is not significant
+($\chi^2(3)=3.75$, $p=0.290$). Under training label noise of 10--20\%,
+an exploratory signal favors the normalized penalty (median paired
+differences up to $+0.0217$ with bootstrap confidence intervals
+excluding zero), which is not confirmed by the primary omnibus
+protocol. Split-selection stability does not improve (normalized
+variant has the lowest root-feature agreement, $0.78$), and ANLS
+achieves the highest split stability yet not better prediction
+stability, empirically separating the two notions. Computational cost
+of the penalized trees is modest at refit time but tuning requires
+hundreds of bootstrap gain evaluations per split. We report positive,
+negative, and inconclusive findings without superiority claims.
 \end{abstract}
 
 \begin{IEEEkeywords}
 Decision trees, split criterion, bootstrap stability, gain variance,
-nested cross-validation, nonparametric statistical comparison.
+label noise, nested cross-validation.
 \end{IEEEkeywords}
 
 \section{Introduction}
-\IEEEPARstart{D}{ecision} trees are nonparametric classifiers that
-recursively partition the feature space. The CART split criterion selects
-the candidate (feature, threshold) that maximizes the reduction of Gini
-impurity \cite{breiman1984cart,quinlan1986induction}. However, tree
-structure is known to be unstable: small perturbations of the training
-data can change the selected split \cite{li2002instability}, and
-consequently the predictions --- the very phenomenon behind bagging and
-random forests \cite{breiman1996bagging,breiman2001randomforests,dietterich2000ensemble}.
+\IEEEPARstart{D}{ecision} trees are fast and interpretable, but their
+structure is unstable: small training perturbations change the selected
+split \cite{li2002instability}, motivating ensembles
+\cite{breiman1996bagging,breiman2001randomforests,dietterich2000ensemble}
+and stabilization methods
+\cite{turney1995stability,briand2009stability,lee2024anls,mirzamomen2017stable,dannegger2000nls}.
+A previous experiment of ours evaluated a candidate criterion
+$\mathrm{Score}(s)=\mathrm{Gain}(s,D)-\lambda\,\mathrm{Var}_b[\mathrm{Gain}(s,D^{(b))}]$;
+descriptively it ranked best among single trees yet provided no
+confirmatory evidence of improvement (Friedman $p=0.1353$), did not
+improve prediction stability, and cost roughly $40\times$ CART fitting
+time. That formulation's penalty is scale-dependent, which hinders the
+interpretation of $\lambda$.
 
-Various approaches have reduced this instability at different levels:
-significance filtering, structural restriction, ensemble aggregation, or
-stable model selection \cite{turney1995stability,briand2009stability,lee2024anls,mirzamomen2017stable}.
-What is rarely tested directly is the narrower question:
-\textbf{can a bootstrap variance penalty on the split gain, subtracted
-directly from the split score, improve out-of-sample Macro-F1 and/or
-prediction stability compared with standard CART under repeated
-resampling, at acceptable runtime cost?}
-
-Null hypothesis: no systematic improvement over the baseline across
-independent datasets. No hypothesis is made that SPDT must win. The
-claimed contributions are limited to (i)~an explicit candidate
-formulation, (ii)~a reproducible implementation and audit, (iii)~a
-leakage-free nested-CV evaluation, and (iv)~honest ablation and
-statistical analysis of both positive and negative outcomes.
+This extension asks five questions.
+\textbf{RQ1:} does a normalized bootstrap gain-variance penalty improve
+Macro-F1 relative to CART and the original SPDT?
+\textbf{RQ2:} do SPDT or its normalized variant resist corrupted training
+labels better?
+\textbf{RQ3:} does penalizing bootstrap gain variance improve
+split-selection stability, even if prediction stability does not improve?
+\textbf{RQ4:} are any observed benefits worth the computational cost?
+\textbf{RQ5:} how does the method compare with the closest reproducible
+published stabilization method (ANLS \cite{lee2024anls})?
+Null hypothesis: no systematic difference across independent datasets.
 
 \section{Related Work}
-\subsection{Decision Tree Stability}
-Structural tree instability was formalized by Li and Clarke
-\cite{li2002instability}. Quantitative stability and tree-similarity
-measures were developed by Turney \cite{turney1995stability} and Briand
-et al.\ \cite{briand2009stability}, who also evaluated bootstrap-based
-node-level stabilization (the NLS/Dannegger lineage). Lee et al.\
-\cite{lee2024anls} proposed ANLS, which runs bootstrap iterations at each
-node and selects the most frequently chosen predictor --- the closest
-resampling-per-node mechanism to this study, but its aggregation is
-frequency voting rather than a gain-variance penalty. Mirzamomen and
-Kangavari \cite{mirzamomen2017stable} stabilize trees through
-multi-attribute split tests.
+Tree stability measurement and stabilization have a long history:
+quantitative stability measures \cite{turney1995stability}, tree
+similarity with node-level bootstrap stabilization (NLS)
+\cite{briand2009stability,dannegger2000nls}, multi-attribute split tests
+\cite{mirzamomen2017stable}, and ANLS, which iterates per-node
+bootstraps until a binomial $Z$-test confirms the modal predictor and
+uses the median winning cutoff \cite{lee2024anls}. Modified split
+criteria include Tsallis-entropy measures \cite{wang2017tsallis},
+label-noise-robust criteria \cite{yang2019pairgain}, bias-corrected Gini
+selection \cite{strobl2007bias}, uncertainty-gated stream splitting
+\cite{domingos2000vfdt}, environment-consistent splitting
+\cite{delise2026era}, and minimum-split-gain regularization
+\cite{chen2016xgboost}. Coefficient-of-variation impurity measures
+\cite{himabindu2015cvdt} are keyword-adjacent but use variability as the
+\emph{impurity}, never as a dispersion penalty on the gain. A prior-art
+search (2026-10-22) found no formula-level equivalent of
+$\mathrm{Gain}-\lambda\,\mathrm{Var}_b[\mathrm{Gain}]$ or its
+normalized form; a negative search is not proof of novelty, and both
+formulations remain candidates.
 
-\subsection{Alternative Split Criteria}
-Two-term Tsallis entropy criteria \cite{wang2017tsallis}, label-noise-robust
-criteria \cite{yang2019pairgain}, and bias-corrected Gini split selection
-\cite{strobl2007bias} show that the ``modify the split score'' space is
-active. Hoeffding-bound data-stream trees \cite{domingos2000vfdt} decide
-splits only when the gain estimate is separated from the runner-up by a
-confidence interval, and gradient-boosted trees regularize splitting with
-a minimum-split-gain threshold \cite{chen2016xgboost}. Delise
-\cite{delise2026era} scores split consistency across environments in
-boosting. Penalizing a resampled score by its variance is also known
-outside trees (the mean--variance pattern in model selection). None of the
-works we verified contains the formula
-$\mathrm{Gain}-\lambda\,\mathrm{Var}_{\text{bootstrap}}[\mathrm{Gain}]$;
-nevertheless, a negative search result is not proof of novelty, and the
-formulation remains a candidate.
-
-\section{Method}
-\subsection{Proposed Split Criterion}
-For a node with dataset $D$ (training portion only), class
-probabilities $p(c\mid D)$, and $C$ classes, the Gini impurity is
+\section{Proposed Methods}
+\subsection{Original SPDT (baseline)}
+For node data $D$ with Gini impurity
 \begin{equation}
-\operatorname{Gini}(D) = 1 - \sum_{c=1}^{C} p(c\mid D)^2 .
+\operatorname{Gini}(D) = 1 - \sum_{c=1}^{C} p(c\mid D)^2,
 \label{eq:gini}
 \end{equation}
-For a candidate split $s$ partitioning $D$ into $D_L$ and $D_R$, the CART
-gain is
+the CART gain of a candidate split $s$ is
 \begin{equation}
 \operatorname{Gain}(s,D) = \operatorname{Gini}(D)
 - \tfrac{|D_L|}{|D|}\operatorname{Gini}(D_L)
 - \tfrac{|D_R|}{|D|}\operatorname{Gini}(D_R).
 \label{eq:gain}
 \end{equation}
-From $D$ we draw $B$ bootstrap resamples $D^{(b)}$ (sampling with
-replacement, node rows only). With the candidate $(s)$ fixed, the
-resampled gain variance is
+With $B$ bootstrap resamples $D^{(b)}$ of the node rows,
 \begin{equation}
 V(s) = \operatorname{Var}_{b}\!\left[\operatorname{Gain}(s,D^{(b)})\right],
 \qquad b = 1,\dots,B,
 \label{eq:var}
 \end{equation}
-and the proposed score is
 \begin{equation}
-\boxed{\;\operatorname{Score}(s) = \operatorname{Gain}(s,D) - \lambda\, V(s)\;}
+\operatorname{Score}(s) = \operatorname{Gain}(s,D) - \lambda V(s).
 \label{eq:score}
 \end{equation}
-where $\lambda \geq 0$ controls the penalty strength. Here $D$ is the
-current node's training data, $s$ is a (feature, threshold) candidate,
-$B$ is the number of bootstrap resamples, and $\lambda$ weights the
-penalty; $\lambda{=}0$ disables the penalty entirely. Candidate thresholds
-are midpoints between sorted distinct adjacent values;
-$\mathrm{min\_samples\_leaf}$ and $\mathrm{min\_samples\_split}$ are applied
-to original node counts; an empty child partition inside a resample
-contributes zero; leaves predict the majority class with smallest-label
-tie-breaking; bootstrap seeds derive deterministically from
-$(\mathrm{random\_state}, \mathrm{node\ id})$. For $\lambda{=}0$ the
-estimator degenerates to a custom CART reference, verified identical to an
-independent reference implementation in unit tests. A separate exploratory
-variant normalizing $V(s)$ by $\operatorname{Gain}(s,D)^2+\varepsilon$ is
-documented but is not the main method. An important limitation is that
-$V(s)$ is scale-dependent on the gain.
+Deterministic policies: midpoint thresholds between sorted distinct
+values; validity constraints on original counts; empty resample children
+contribute zero; seeded bootstrap per node. For $\lambda{=}0$ the
+estimator reduces to a custom CART reference verified against an
+independent implementation.
+\subsection{Normalized SPDT (candidate)}
+\begin{equation}
+\operatorname{Score}_{\mathrm{norm}}(s) =
+\operatorname{Gain}(s,D)
+- \lambda\,\frac{V(s)}{\operatorname{Gain}(s,D)^2 + \varepsilon},
+\label{eq:norm}
+\end{equation}
+with $\varepsilon>0$ stabilizing near-zero gains. The normalization makes
+the penalty scale-free with respect to the gain magnitude, addressing
+the main limitation of \eqref{eq:score}. This is an exploratory
+hypothesis; it is not claimed to be superior or novel.
+\subsection{ANLS Comparator}
+ANLS \cite{lee2024anls} repeatedly draws bootstrap resamples at each
+node, finds the plain CART-optimal split per replicate, and stops when
+the binomial $Z$-statistic of the top-two predictor frequencies exceeds
+$Z_\alpha$ ($\alpha{=}90\%$, minimum 10 replicates); the stabilized
+split uses the modal predictor with the median of its winning cutoffs.
+Our faithful re-implementation follows the paper's pseudocode with a
+documented iteration cap of 400 (the paper reports median 23 and mean
+364 iterations per node); all datasets are numeric, so the categorical
+branch is omitted.
 
-\subsection{Evaluation Design}
-We use eight UCI tabular classification datasets (Table~\ref{tab:inventory}).
-The protocol is repeated stratified nested CV: an outer loop of 5 folds
-$\times$ 3 repeats for each of the seeds $[42,123,2026]$ (45 evaluations
-per dataset--method, identical splits for all methods), and an inner
-stratified 3-fold loop for tuning with deterministically derived seeds.
-Preprocessing is median imputation fitted on the training portion only.
-The primary metric is Macro-F1; secondary measures are balanced accuracy,
-accuracy, fit/predict time, node count, and tree depth. Prediction
-stability is measured separately as mean pairwise disagreement among
-models trained on ten 90\% subsamples of each outer training fold,
-evaluated on the same outer test fold, and is reported separately from
-accuracy. The primary comparison set is sklearn CART, custom CART
-($\lambda{=}0$), and SPDT; a random forest serves as a non-equivalent
-contextual benchmark outside the omnibus test.
+\section{Experimental Setup}
+Datasets: the same eight UCI tabular datasets as the baseline study
+(Table~\ref{tab:inventory}); sources and SHA256 hashes are unchanged.
+Design: repeated stratified nested CV, outer 5 folds $\times$ 3 repeats
+on seeds $[42,123,2026]$ (45 evaluations per dataset--method, identical
+splits for all methods), inner stratified 3-fold tuning; median
+imputation fitted on training folds only.
 
-\subsection{Statistical Analysis}
-The unit of inference is the dataset (averaged over the 45 outer folds),
-never the individual fold. The three primary methods are compared with the
-Friedman test using datasets as blocks; only when the omnibus test
-provides grounds for it are paired Wilcoxon signed-rank tests with Holm
-correction and rank-biserial effect sizes run. $p \geq 0.05$ is never
-interpreted as evidence of equivalence.
+\emph{Tuning budget (staged, documented).} Stage S1 tunes the tree
+structure on plain custom CART ($4{\times}3{\times}3$ configurations);
+S2 and S3 tune $\lambda\in\{0.1,1,10\}$ for the original and normalized
+criteria at the frozen structure with $B{=}10$ and $\varepsilon{=}10^{-4}$.
+After a pilot on three datasets, the predefined budget was reduced and
+frozen: random forest context benchmark uses 100 trees; two noise
+realizations per level; eight stability subsamples; the ANLS iteration
+cap above. All decisions used training folds only.
 
-\section{Results and Discussion}
-Table~\ref{tab:performance} reports per-dataset Macro-F1 (mean $\pm$ SD
-over the 45 outer folds, descriptive only). Table~\ref{tab:ranks} reports
-mean ranks, and Table~\ref{tab:friedman} reports the omnibus test. SPDT
-versus custom CART records six wins, zero ties, and two losses with mean
-Macro-F1 difference $+0.0058$. The Friedman test gives
-$\chi^2(2)=4.0000$, $p=0.1353$, Kendall's $W=0.2500$ --- insufficient
-evidence to reject the null hypothesis, so confirmatory post-hoc
-comparisons were not run. The exploratory SPDT--custom CART Wilcoxon
-comparison gives a raw $p=0.078$, which does not survive the 5\% level
-and must not be read as significant; with only eight datasets, statistical
-power is limited. These results are reported as they stand.
+\emph{Label noise protocol.} Outer training labels are corrupted at
+levels $\{0,5,10,20,30\}\%$ (each corrupted label moves to a different
+class; deterministic seeds; identical corruption masks across methods;
+two realizations per level). Hyperparameters are frozen from
+clean-label inner CV; outer test folds remain clean.
+\emph{Stability protocol.} Per outer fold, eight models are trained on
+90\% subsamples with frozen parameters; we measure pairwise root-feature
+agreement, root-threshold variation within the modal feature only, and
+prediction disagreement on the fixed outer test fold. The unit of
+inference is the dataset.
 
 \input{tables_generated}
+\input{tables_extension}
 
-A second finding concerns stability. The bootstrap-variance penalty does
-\emph{not} reduce prediction disagreement: SPDT is slightly worse
-($0.101$) than custom CART ($0.093$) and sklearn CART ($0.098$), while
-the random forest remains the most stable ($0.027$) through ensemble
-aggregation (Table~\ref{tab:stability}). The motivating promise of the
-method --- better prediction stability --- therefore does not materialize
-on this benchmark; a gain-variance penalty is no substitute for
-ensembling.
+\section{Results}
+\subsection{Baseline Recap (Separate Experiment)}
+The original study reports SPDT versus custom CART: 6 wins, 0 ties,
+2 losses, mean Macro-F1 difference $+0.0058$; Friedman
+$\chi^2(2)=4.0000$, $p=0.1353$, Kendall's $W=0.2500$ (not significant);
+SPDT prediction disagreement $0.1014$ versus $0.0928$ (custom CART);
+mean fitting time $21.43$ s versus $0.53$ s per outer fold. Those
+artifacts are preserved unchanged.
+\subsection{Clean-Data Comparison (Extension)}
+Table~\ref{tab:extperf} reports per-dataset Macro-F1 for six methods.
+The normalized variant does not improve over custom CART (3 wins, 5
+losses, mean difference $-0.0001$) and is slightly below the original
+SPDT (2 wins, 6 losses, $-0.0029$). ANLS is descriptively the best
+single tree (5 wins, 3 losses, $+0.0066$), comparable in magnitude to
+the original SPDT's baseline gain. The Friedman omnibus over the four
+primary methods is not significant ($\chi^2(3)=3.75$, $p=0.290$), so
+confirmatory post-hoc tests were not run; paired analyses are
+exploratory with bootstrap confidence intervals.
 
-Third, the identical-split ablations (Table~\ref{tab:ablation}) show that
-neither the penalty strength $\lambda$ nor the number of resamples $B$
-materially changes Macro-F1 (all $\lambda$ and $B$ variants fall in the
-$0.859$--$0.861$ range), whereas depth/leaf constraints matter far more
-(depth 3 drops to about $0.836$). Inner tuning frequently selects a large
-$\lambda$ (10 on 64.7\% of folds) and a small $B$ (5 on 53.1\%), per
-Table~\ref{tab:hyper}, indicating the penalty is often selected but has a
-small effect on accuracy. The cost is real: SPDT fitting time is roughly
-$40\times$ that of custom CART (Table~\ref{tab:runtime}). Overall, the
-effectiveness of the bootstrap gain-variance penalty is dataset-dependent
-and small in magnitude; simple impurity-based splitting remains
-preferable for these small-to-medium datasets.
+\section{Robustness Analysis}
+Table~\ref{tab:noise} and Fig.~\ref{fig:noise} show Macro-F1 against
+training label noise. All methods degrade; the random forest remains
+the most robust reference. The normalized penalty degrades the least
+among single trees: median paired differences against custom CART are
+$+0.0063$ (5\%), $+0.0136$ (10\%, CI $[0.0015,0.0186]$), $+0.0217$
+(20\%, CI $[0.0132,0.0333]$), and $+0.0121$ (30\%, CI $[-0.0051,0.0280]$).
+Per-level Friedman tests are significant at 10\% ($p=0.024$) and 20\%
+($p=0.003$). These noise analyses are exploratory: they were not the
+primary confirmatory path, multiple levels were examined, and the
+high-noise interval includes zero. We therefore report a promising but
+unconfirmed robustness signal, not a robustness claim.
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=\textwidth]{../figures/noise_robustness_macro_f1.png}
+\caption{Mean Macro-F1 versus training label noise level (four primary
+methods plus contextual random forest). Exploratory analysis.}
+\label{fig:noise}
+\end{figure*}
+
+\section{Stability Analysis}
+Table~\ref{tab:stability} and Figs.~\ref{fig:rootagr}--\ref{fig:predis}
+summarize stability. Penalizing bootstrap gain variance does
+\emph{not} improve split selection: the normalized variant shows the
+lowest root-feature agreement ($0.78$ versus $0.83$ for CART variants)
+and its prediction disagreement ($0.105$) exceeds both CART ($0.093$)
+and the original SPDT ($0.096$). ANLS attains the highest split
+agreement ($0.85$, consistent with its design) yet its prediction
+disagreement is the highest among single trees ($0.109$): stable splits
+do not guarantee stable predictions, and the two notions must be
+reported separately. Root-threshold variation is small for all methods
+and is only computed within the modal feature.
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\columnwidth]{../figures/root_split_agreement.png}
+\caption{Mean pairwise root-feature agreement over folds and datasets.}
+\label{fig:rootagr}
+\end{figure}
+\begin{figure}[!t]
+\centering
+\includegraphics[width=\columnwidth]{../figures/prediction_disagreement.png}
+\caption{Mean prediction disagreement of subsampled models.}
+\label{fig:predis}
+\end{figure}
+
+\section{Ablation Study}
+Table~\ref{tab:ablation} (identical splits, frozen structure) shows
+that all penalty configurations cluster within $\pm0.013$ Macro-F1;
+the normalized variant with small $\lambda{=}0.1$ ranks highest
+($0.8617$) while large $\lambda$ or small $\varepsilon$ hurts slightly;
+depth restrictions (depth 3, $0.835$--$0.836$) matter far more than any
+penalty setting. Ordinary tree-complexity control, not the variance
+penalty, dominates the outcome variance.
+
+\section{Computational Cost}
+Table~\ref{tab:runtime} reports refit times of tuned configurations and
+counters from the estimators. A penalized refit evaluates about $18$k
+candidate splits and, when $\lambda>0$, roughly $178$k bootstrap gain
+evaluations per outer fold; refit times remain under $0.1$ s, ANLS
+averages $2.2$ s, and a single-process memory probe measured $2.3$ MB
+peak for a penalized fit. These figures exclude the staged tuning
+overhead (S1--S3, tens of inner-CV fits per outer fold), which is the
+dominant cost of the penalized methods and must be budgeted in
+practice. Gains of the size observed do not justify this overhead for
+clean-data deployment; the judgment is closer under label noise, where
+the exploratory signal appeared.
+
+\section{Discussion}
+\textbf{RQ1:} the normalized penalty does not improve clean-data
+Macro-F1; it performs at or slightly below CART and the original SPDT,
+and the omnibus test finds no differences ($p=0.290$).
+\textbf{RQ2:} under 10--20\% training label noise the normalized
+variant degrades least among single trees, with paired confidence
+intervals excluding zero; this exploratory signal requires independent
+confirmation before any robustness claim.
+\textbf{RQ3:} neither the original nor the normalized penalty improves
+split-selection stability; the normalized variant is the least stable
+at the root split, and prediction stability mirrors the baseline
+finding (slightly worse than CART). ANLS confirms that split stability
+and prediction stability are distinct quantities.
+\textbf{RQ4:} refit-time cost is modest, but tuning overhead is
+substantial; the observed clean-data effects do not justify the cost,
+while the noise-robustness signal is the only result that begins to do
+so.
+\textbf{RQ5:} ANLS, faithfully re-implemented, is descriptively the
+strongest single-tree comparator and a more promising stabilization
+avenue than gain-variance penalties on these datasets.
+
+\section{Limitations}
+Eight small datasets limit statistical power; Gini impurity only;
+numeric features only; a single disagreement-based stability proxy;
+noise injected independently of features (real label noise is often
+not uniform); frozen clean-label tuning under noise is one of several
+defensible protocols; ANLS uses a capped iteration budget; the closest
+alternative criteria (minimax split, conditional inference trees) were
+analyzed but not benchmarked; and the novelty of both penalty
+formulations remains unverified at the formula level.
 
 \section{Conclusion}
-This study evaluated the SPDT candidate formulation reproducibly, with
-leakage-free repeated nested CV, controlled ablation on identical splits,
-and dataset-level statistical analysis on eight UCI datasets.
-Descriptively, SPDT achieved the best mean rank and won six of eight
-paired comparisons against custom CART, but the Friedman test provided
-insufficient evidence of a difference ($\chi^2(2)=4.0000$, $p=0.1353$),
-so there is no confirmatory basis for claiming improvement. Moreover, the
-prediction-stability measure did not improve and was slightly worse,
-while compute cost rose roughly $40\times$. Under the tested conditions,
-the simplicity of CART remains preferable. Limitations: eight small
-datasets, Gini impurity only, a single disagreement-based stability proxy,
-a formula-level novelty claim that is not established, and the absence of
-the closest literature criteria (ANLS, minimax split) as comparators. The
-most valuable future work is direct comparison with node-level bootstrap
-stabilization from the literature, a theoretically grounded penalty
-normalization by gain scale, and evaluation on larger benchmarks.
+Across eight UCI datasets with leakage-free repeated nested CV, a
+normalized bootstrap gain-variance penalty did not improve clean-data
+classification over CART or the original SPDT, did not improve split or
+prediction stability, and adds tuning overhead. Its one promising
+signal---slower degradation under 10--20\% training label noise---is
+exploratory and awaits confirmatory replication on larger benchmarks.
+A faithful ANLS implementation was descriptively the best single-tree
+stabilized method, and empirically separated split stability from
+prediction stability. We conclude that, under the tested conditions,
+simple CART remains preferable for clean data, and that future
+stabilization research should prioritize voting-based per-node
+stabilization over gain-variance penalties.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
