@@ -98,7 +98,7 @@ def main():
     fig_noise(b)
     fig_root_agreement(c)
     fig_pred_disagreement(c, a)
-    fig_runtime_tradeoff(rt, a)
+    fig_runtime_tradeoff(rt)
     print("extension figures written")
 
 
