@@ -7,4 +7,5 @@ seaborn==0.13.2
 joblib==1.6.0
 PyYAML==6.0.3
 ucimlrepo==0.0.7
+statsmodels==0.15.0
 pytest==9.1.1

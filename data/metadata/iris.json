@@ -1,0 +1,19 @@
+{
+  "dataset": "iris",
+  "source": "ucimlrepo",
+  "uci_id": 53,
+  "doi": "10.24432/C56C76",
+  "source_url": "https://archive.ics.uci.edu/dataset/53/iris",
+  "downloaded_at_utc": "2026-10-22T01:51:14.458206+00:00",
+  "n_samples": 150,
+  "n_features": 4,
+  "target_name": "class",
+  "n_classes": 3,
+  "class_distribution": {
+    "Iris-setosa": 50,
+    "Iris-versicolor": 50,
+    "Iris-virginica": 50
+  },
+  "missing_values": false,
+  "sha256": "e7a5aaf8dee37f6e4392af17f7d59bee148bc73e8b153d78470ab6fb44a1cc60"
+}

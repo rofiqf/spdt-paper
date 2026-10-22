@@ -76,10 +76,10 @@ def inner_seed(seed, repeat, fold):
 
 def _tree_stats(fitted_pipe):
     clf = fitted_pipe.named_steps["clf"]
+    if hasattr(clf, "node_count_"):  # custom tree (juga punya tree_)
+        return int(clf.node_count_()), int(clf.tree_depth_())
     if hasattr(clf, "tree_"):  # sklearn CART
         return int(clf.tree_.node_count), int(clf.tree_.max_depth)
-    if hasattr(clf, "node_count_"):  # custom tree
-        return int(clf.node_count_()), int(clf.tree_depth_())
     return np.nan, np.nan  # random forest etc.
 
 

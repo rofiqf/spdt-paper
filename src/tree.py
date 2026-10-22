@@ -47,9 +47,8 @@ def _gini_from_counts(counts: np.ndarray) -> np.ndarray:
     """Gini from class-count rows. Empty rows (sum 0) give 0."""
     counts = np.asarray(counts, dtype=np.float64)
     total = counts.sum(axis=-1, keepdims=True)
-    out = np.zeros(counts.shape[:-1], dtype=np.float64)
-    np.divide(counts, total, out=np.zeros_like(counts), where=total > 0)
     p = np.divide(counts, total, out=np.zeros_like(counts), where=total > 0)
+    out = np.zeros(counts.shape[:-1], dtype=np.float64)
     nz = total[..., 0] > 0
     out[nz] = 1.0 - np.sum(p[nz] ** 2, axis=-1)
     return out
@@ -99,7 +98,8 @@ class StabilityTreeClassifier(BaseEstimator, ClassifierMixin):
         Returns list over features of (gain vector len n-1, candidate bool
         mask honoring min_samples_leaf on original counts)."""
         out = []
-        positions = np.arange(1, n)  # left size for threshold after pos t
+        node_totals = np.bincount(y_enc,
+                                  minlength=self._n_classes).astype(np.float64)
         for j in range(X.shape[1]):
             v = X[:, j]
             order = np.argsort(v, kind="mergesort")
@@ -109,7 +109,7 @@ class StabilityTreeClassifier(BaseEstimator, ClassifierMixin):
             oh[np.arange(n), y_sorted] = 1.0
             left_counts = np.cumsum(oh, axis=0)[:-1]           # (n-1, C)
             left_n = left_counts.sum(axis=1)                    # (n-1,)
-            right_counts = self._class_totals - left_counts
+            right_counts = node_totals - left_counts
             right_n = n - left_n
             lc = left_counts / left_n[:, None]
             rc = right_counts / right_n[:, None]
@@ -154,14 +154,11 @@ class StabilityTreeClassifier(BaseEstimator, ClassifierMixin):
             right = total_b[:, None, :] - left                 # (B, n-1, C)
             left_n = left.sum(axis=2)                          # (B, n-1)
             right_n = n - left_n
-            gini_l = np.zeros_like(left_n)
-            np.divide(1.0, left_n, out=gini_l, where=left_n > 0)
-            gini_l = np.where(left_n[..., None] > 0,
-                              1.0 - np.sum((left / left_n[..., None]) ** 2,
-                                           axis=2), 0.0)
-            gini_r = np.where(right_n[..., None] > 0,
-                              1.0 - np.sum((right / right_n[..., None]) ** 2,
-                                           axis=2), 0.0)
+            with np.errstate(invalid="ignore", divide="ignore"):
+                g_l = 1.0 - np.sum((left / left_n[..., None]) ** 2, axis=2)
+                g_r = 1.0 - np.sum((right / right_n[..., None]) ** 2, axis=2)
+            gini_l = np.where(left_n > 0, g_l, 0.0)
+            gini_r = np.where(right_n > 0, g_r, 0.0)
             gain_b = (gini_total_b[:, None]
                       - np.where(left_n > 0, (left_n / n) * gini_l, 0.0)
                       - np.where(right_n > 0, (right_n / n) * gini_r, 0.0))
@@ -185,8 +182,6 @@ class StabilityTreeClassifier(BaseEstimator, ClassifierMixin):
                 "(training partition only) before this estimator")
         self.classes_, y_enc = np.unique(y, return_inverse=True)
         self._n_classes = len(self.classes_)
-        self._class_totals = np.bincount(
-            y_enc, minlength=self._n_classes).astype(np.float64)
         self._node_counter = 0
         self._depth_seen = 0
         self._n_nodes = 0
@@ -194,49 +189,47 @@ class StabilityTreeClassifier(BaseEstimator, ClassifierMixin):
         return self
 
     def _build(self, X, y_enc, depth):
-        node = self._leaf(y_enc)
-        self._n_nodes += 1
         self._depth_seen = max(self._depth_seen, depth)
         n = X.shape[0]
 
-        if (self.max_depth is not None and depth >= self.max_depth):
-            return node
-        if n < self.min_samples_split:
-            return node
-        if np.unique(y_enc).size == 1:
-            return node
-
-        gini_node = float(_gini_from_counts(
-            np.bincount(y_enc, minlength=self._n_classes)[None, :])[0])
-        orig = self._orig_gains(X, y_enc, n, gini_node)
-
-        if self.penalty_lambda and self.penalty_lambda > 0.0:
-            varis = self._bootstrap_variance(X, y_enc, n)
-        else:
-            varis = [None] * X.shape[1]
+        stopping = (
+            (self.max_depth is not None and depth >= self.max_depth)
+            or n < self.min_samples_split
+            or np.unique(y_enc).size == 1)
 
         best = None  # (score, gain, feature, thr, order)
-        for j in range(X.shape[1]):
-            gain, valid, order = orig[j]
-            if not valid.any():
-                continue
-            if varis[j] is None:
-                score = gain
-            elif self.normalized_penalty:
-                denom = gain ** 2 + self.penalty_epsilon
-                score = gain - self.penalty_lambda * varis[j] / denom
+        if not stopping:
+            gini_node = float(_gini_from_counts(
+                np.bincount(y_enc, minlength=self._n_classes)[None, :])[0])
+            orig = self._orig_gains(X, y_enc, n, gini_node)
+
+            if self.penalty_lambda and self.penalty_lambda > 0.0:
+                varis = self._bootstrap_variance(X, y_enc, n)
             else:
-                score = gain - self.penalty_lambda * varis[j]
-            score = np.where(valid, score, -np.inf)
-            t = int(np.argmax(score))
-            if not valid[t]:
-                continue
-            cand = (float(score[t]), float(gain[t]), j, t, order)
-            if best is None or cand[0] > best[0]:
-                best = cand
+                varis = [None] * X.shape[1]
+
+            for j in range(X.shape[1]):
+                gain, valid, order = orig[j]
+                if not valid.any():
+                    continue
+                if varis[j] is None:
+                    score = gain
+                elif self.normalized_penalty:
+                    denom = gain ** 2 + self.penalty_epsilon
+                    score = gain - self.penalty_lambda * varis[j] / denom
+                else:
+                    score = gain - self.penalty_lambda * varis[j]
+                score = np.where(valid, score, -np.inf)
+                t = int(np.argmax(score))
+                if not valid[t]:
+                    continue
+                cand = (float(score[t]), float(gain[t]), j, t, order)
+                if best is None or cand[0] > best[0]:
+                    best = cand
 
         if best is None or best[1] <= 0.0:
-            return node  # no positive-gain valid split -> leaf
+            self._n_nodes += 1
+            return self._leaf(y_enc)  # daun: stopping / tidak ada gain > 0
 
         _, gain_best, j, t, order = best
         v_sorted = X[order, j]
