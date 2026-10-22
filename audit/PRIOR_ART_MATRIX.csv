@@ -1,0 +1,24 @@
+reference,year,venue,doi_or_url,portal_or_indexing,formula_overlap_vs_SPDT,formula_overlap_vs_normalized,status_in_paper
+"Cover & Hart 1967 (NN foundation)",1967,IEEE TIT,10.1109/TIT.1967.1053964,IEEE Xplore,"n/a (konteks NN)",n/a,not cited (baseline paper)
+"Breiman et al. CART (book)",1984,Chapman & Hall/CRC,ISBN 9780412048418,book (no portal),foundational,foundation,not cited in extended
+"Quinlan 1986 (ID3/gain)",1986,Machine Learning 1:81-106,10.1023/A:1022643204877,SpringerLink,template gain-penalty (gain ratio),same,not cited in extended
+"Turney 1995 (stability quantification)",1995,Machine Learning 20:23-33,10.1007/BF00993473,SpringerLink,conceptual (stability measure),conceptual,cited
+"Domingos & Hulten VFDT",2000,KDD:71-80,10.1145/347090.347107,ACM DL,conceptual (gain uncertainty filter),conceptual,cited
+"Dietterich 2000 (ensembles)",2000,Machine Learning 40:139-157,10.1023/A:1007607513941,SpringerLink,motivation only,motivation,cited
+"Li & Clarke 2002 (instability)",2002,KDD:570-575,10.1145/775047.775131,ACM DL,motivation (split instability),motivation,cited
+"Dannegger 2000 (NLS)",2000,Statistics in Medicine 19(4):475-491,10.1002/(SICI)1097-0258(20000229)19:4<475::AID-SIM351>3.0.CO;2-V,Wiley (Scopus-indexed),conceptual (bootstrap/node voting),conceptual,cited (baru)
+"Briand et al. 2009 (NLS-REP)",2009,CSDA 53(4):1208-1217,10.1016/j.csda.2008.10.033,ScienceDirect,conceptual (node bootstrap stabilization),conceptual,cited
+"Strobl et al. 2007 (Gini bias)",2007,CSDA 52(1):483-501,10.1016/j.csda.2006.12.030,ScienceDirect,conceptual (variance of Gini gain central; hypothesis testing),conceptual,cited
+"Hothorn et al. 2006 (ctree)",2006,JCGS 15(3):651-674,10.1198/106186006X133933,T&F (not portal),conceptual (standardized statistic),conceptual (closest normalized-statistic ancestor),not cited (portal rule)
+"Chen & Guestrin XGBoost",2016,KDD:785-794,10.1145/2939672.2939785,ACM DL,conceptual (constant gain floor),conceptual,cited
+"Mirzamomen & Kangavari 2017",2017,PAA 20(4):991-1004,10.1007/s10044-016-0542-2,SpringerLink,conceptual (composite splits),conceptual,cited
+"Wang et al. 2017 (Tsallis)",2017,KBS 120:34-42,10.1016/j.knosys.2016.12.021,ScienceDirect,none-to-weak (criterion redesign),none-to-weak,cited
+"Yang et al. 2019 (PairGain)",2019,ICDM:1420-1425,10.1109/ICDM.2019.00184,IEEE Xplore,conceptual (label-noise robust criterion),conceptual,cited
+"Hima Bindu & Raghavendra Rao 2015 (CvDT)",2015,AISC 415 (FANCCO),10.1007/978-3-319-27212-2_11,SpringerLink,none (CV is impurity not penalty),none,cited (baru)
+"Lee, Sim, Hong 2024 (ANLS)",2024,IEEE Access 12:90061-90072,10.1109/ACCESS.2024.3419228,IEEE Xplore,closest neighbor: per-node bootstrap stabilization by voting (no gain-variance ever computed),none (aggregation entirely different),cited + benchmarked
+"Delise 2026 (era splitting)",2026,ESWA 299:129687,10.1016/j.eswa.2025.129687,ScienceDirect,conceptual (gain consistency across environments),conceptual,cited
+"ESCV / Lim & Yu 2016 (mean-variance model selection)",2016,JCGS 25(2),10.1080/10618600.2015.1020159,T&F (not portal),closest formula-level pattern outside trees (mean minus variance of resampled score),same pattern (model selection not split),not cited (portal rule)
+"Buja & Stuetzle 2006 (bagging theory)",2006,Statistica Sinica 16:323-351,https://www3.stat.sinica.edu.tw/statistica/oldpdf/A16n210.pdf,Statistica Sinica (not portal),theory backdrop,theory,not cited (portal rule)
+"Luo 2025 MinimaxSplit (arXiv)",2025,arXiv:2502.16758,https://arxiv.org/abs/2502.16758,arXiv (not allowed),conceptual (alternative stability-motivated criterion),conceptual,not cited (portal rule) — kandidat benchmark masa depan
+"REKAP: proposed SPDT (original)",2026,this paper,formula Gain − λ·Var_b(Gain),n/a,TARGET,cited as candidate
+"REKAP: proposed normalized SPDT",2026,this paper,Gain − λ·Var/(Gain²+eps),n/a,parent of target,cited as exploratory candidate
