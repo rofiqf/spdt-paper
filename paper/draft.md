@@ -1,4 +1,7 @@
-# Stability-Penalized Split Selection for Decision Tree Classification: Sebuah Evaluasi Multi-Dataset yang Reproducible
+---
+title: "Stability-Penalized Split Selection for Decision Tree Classification: Sebuah Evaluasi Multi-Dataset yang Reproducible"
+author: "Rofiq Fauzi (p36202600047@mhs.dinus.ac.id), Magister Artificial Intelligence, Universitas Dian Nuswantoro"
+---
 
 **Kata kunci**--pohon keputusan; kriteria split; stabilitas bootstrap; variansi gain; *nested cross-validation*; perbandingan statistik nonparametrik.
 

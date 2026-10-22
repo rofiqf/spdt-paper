@@ -181,7 +181,14 @@ def main():
         "\u00b2": "^2",
     }.items():
         out = out.replace(src, dst)
-    (PAPER / "draft.md").write_text(out)
+    yaml_fm = (
+        "---\n"
+        'title: "Stability-Penalized Split Selection for Decision Tree '
+        'Classification: Sebuah Evaluasi Multi-Dataset yang Reproducible"\n'
+        'author: "Rofiq Fauzi (p36202600047@mhs.dinus.ac.id), Magister '
+        'Artificial Intelligence, Universitas Dian Nuswantoro"\n'
+        "---\n\n")
+    (PAPER / "draft.md").write_text(yaml_fm + out)
     print("paper written to", PAPER / "draft.md")
 
 

@@ -1,5 +1,3 @@
-# Stability-Penalized Split Selection for Decision Tree Classification: Sebuah Evaluasi Multi-Dataset yang Reproducible
-
 **Kata kunci**—pohon keputusan; kriteria split; stabilitas bootstrap; variansi gain; *nested cross-validation*; perbandingan statistik nonparametrik.
 
 ## Abstrak

@@ -8,7 +8,6 @@ export PATH="$HOME/.TinyTeX/bin/x86_64-linux:$HOME/bin:$PATH"
 pandoc draft.md -s -o paper_raw.tex \
   --citeproc --bibliography references.bib \
   -V documentclass=IEEEtran -V classoption=conference \
-  -V author="Anonymous" \
   -V header-includes='\usepackage{times}' \
   -V linkcolor=black -V urlcolor=black
 
