@@ -78,10 +78,6 @@ curl -sSL https://bootstrap.pypa.io/get-pip.py | .venv/bin/python
 .venv/bin/python scripts/validate_reproducibility.py
 .venv/bin/python scripts/validate_extension_reproducibility.py
 
-# rebuild paper (butuh TinyTeX/pdflatex)
-cd paper && latexmk -pdf main.tex && cp main.pdf paper_ieee_extended.pdf
-```
-
 ## Penulis
 
 **Rofiq Fauzi** (penulis pertama, mahasiswa) — bersama 
