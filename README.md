@@ -84,10 +84,8 @@ cd paper && latexmk -pdf main.tex && cp main.pdf paper_ieee_extended.pdf
 
 ## Penulis
 
-**Rofiq Fauzi** (penulis pertama, mahasiswa) — bersama 7 dosen
-co-author dari Universitas Dian Nuswantoro: Guruh Fajar Shidik,
-Rindra Yusianto, Tita Talitha, Aripin, Farrikh Alzami,
-Ratih Setyaningrum, Firman Wahyudi.
+**Rofiq Fauzi** (penulis pertama, mahasiswa) — bersama 
+co-author Guruh Fajar Shidik dari Universitas Dian Nuswantoro
 
 ## Catatan integritas
 
